@@ -28,7 +28,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { demoUser } from "@/data";
 import { User } from "@/types";
 import { UserAvatar } from "../shared/book-cover";
 
@@ -74,7 +73,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const user: User = demoUser;
+  const user: User = null;
 
   const links = [...PUBLIC_LINKS, ...(user ? PRIVATE_LINKS : [])];
   const isActive = (href: string) =>

@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { AppProviders } from "@/components/providers/app-providers";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Fraunces, Geist, Inter } from "next/font/google";
@@ -21,7 +22,10 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "BookNook — A Modern Community Library",
+  title: {
+    default: "BookNook — A Modern Community Library",
+    template: "BookNook | %s",
+  },
   description:
     "BookNook is a small online library where readers discover, share, borrow and return books. Add a book, borrow a book, return a book.",
   keywords: ["BookNook", "library", "books", "borrow", "read", "community"],
@@ -47,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </main>
             <Footer />
           </div>
+          <Toaster position="top-right" closeButton />
         </AppProviders>
       </body>
     </html>
