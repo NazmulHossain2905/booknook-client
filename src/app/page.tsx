@@ -1,3 +1,9 @@
+import { Button } from "@/components/ui/button";
+
 export default function Home() {
-  return <div>BookNook Client</div>;
+  return (
+    <div>
+      <Button>BookNook Client</Button>
+    </div>
+  );
 }
