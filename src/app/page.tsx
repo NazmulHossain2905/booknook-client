@@ -1,3 +1,12 @@
+import { HeroSlider } from "@/components/home/hero-slider";
+import { INITIAL_BOOKS } from "@/data";
+
 export default function Home() {
-  return <div></div>;
+  const books = INITIAL_BOOKS;
+
+  return (
+    <>
+      <HeroSlider books={books} />
+    </>
+  );
 }
