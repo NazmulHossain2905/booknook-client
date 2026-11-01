@@ -82,9 +82,14 @@ export function Navbar() {
 
   return (
     <header className="border-border/80 bg-background/85 sticky top-0 z-50 border-b backdrop-blur-md">
-      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+      <nav
+        aria-label="Main navigation"
+        className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8"
+      >
+        {/* Brand */}
         <Link
           href="/"
+          aria-label="BookNook — home"
           className="focus-visible:ring-ring/50 rounded-md outline-none focus-visible:ring-[3px]"
         >
           <LogoWordMark />
@@ -102,31 +107,32 @@ export function Navbar() {
           ))}
         </div>
 
+        {/* Right cluster */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
 
           {user ? (
             <>
-              <Link href="/add-book">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
-                >
-                  <PlusCircle className="size-4" />
+              <Button
+                asChild
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
+              >
+                <Link href="/add-book">
+                  <PlusCircle aria-hidden className="size-4" />
                   Add Book
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <UserMenu />
             </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button variant="ghost" size="sm">
+              <Button asChild variant="ghost" size="sm">
                 <Link href="/login">Sign in</Link>
               </Button>
-              <Button size="sm" className="rounded-full px-5">
+              <Button asChild size="sm" className="rounded-full px-5">
                 <Link href="/register">
-                  <BookOpen className="size-4" />
+                  <BookOpen aria-hidden className="size-4" />
                   Join the Library
                 </Link>
               </Button>
@@ -135,18 +141,19 @@ export function Navbar() {
 
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger>
+            <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Open navigation menu"
                 className="rounded-full lg:hidden"
               >
-                <Menu className="size-5" />
+                <Menu aria-hidden className="size-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex w-75 flex-col gap-0 p-0">
               <SheetHeader className="border-border/70 border-b p-5">
-                <SheetTitle>
+                <SheetTitle asChild>
                   <div>
                     <LogoWordMark compact />
                   </div>
@@ -156,7 +163,10 @@ export function Navbar() {
                 </SheetDescription>
               </SheetHeader>
 
-              <nav className="flex-1 scrollbar-thin space-y-1 overflow-y-auto p-4">
+              <nav
+                aria-label="Mobile navigation"
+                className="flex-1 scrollbar-thin space-y-1 overflow-y-auto p-4"
+              >
                 {links.map((link) => {
                   const Icon = link.icon;
                   const active = isActive(link.href);
@@ -165,6 +175,7 @@ export function Navbar() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
                         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                         active
@@ -172,7 +183,7 @@ export function Navbar() {
                           : "text-muted-foreground hover:bg-accent hover:text-foreground",
                       )}
                     >
-                      <Icon className="size-4.5" />
+                      <Icon aria-hidden className="size-4.5" />
                       {link.label}
                     </Link>
                   );
@@ -200,18 +211,22 @@ export function Navbar() {
                         setOpen(false);
                       }}
                     >
-                      <LogOut className="size-4" />
+                      <LogOut aria-hidden className="size-4" />
                       Log out
                     </Button>
                   </>
                 ) : (
                   <div className="grid gap-2">
-                    <Button variant="outline" onClick={() => setOpen(false)}>
+                    <Button
+                      asChild
+                      variant="outline"
+                      onClick={() => setOpen(false)}
+                    >
                       <Link href="/login">Sign in</Link>
                     </Button>
-                    <Button onClick={() => setOpen(false)}>
+                    <Button asChild onClick={() => setOpen(false)}>
                       <Link href="/register">
-                        <BookOpen className="size-4" />
+                        <BookOpen aria-hidden className="size-4" />
                         Join the Library
                       </Link>
                     </Button>

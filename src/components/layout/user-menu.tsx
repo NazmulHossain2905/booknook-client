@@ -35,19 +35,15 @@ export function UserMenu() {
           <p className="text-muted-foreground truncate text-xs">{user.email}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/profile" className="cursor-pointer">
-          <DropdownMenuItem>
-            <UserRound className="size-4" />
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="cursor-pointer">
+            <UserRound aria-hidden className="size-4" />
             My Profile
-          </DropdownMenuItem>
-        </Link>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          className="cursor-pointer"
-          onClick={handleLogout}
-        >
-          <LogOut className="size-4" />
+        <DropdownMenuItem variant="destructive" className="cursor-pointer">
+          <LogOut aria-hidden className="size-4" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
