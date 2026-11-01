@@ -24,9 +24,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-const DEMO = { email: "alex@example.com", password: "Demo@123" };
-
-export default function LoginView() {
+function LoginContent() {
   usePageTitle("Login");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -246,5 +244,13 @@ export default function LoginView() {
         ]}
       />
     </div>
+  );
+}
+
+export default function LoginView() {
+  return (
+    <React.Suspense fallback={null}>
+      <LoginContent />
+    </React.Suspense>
   );
 }

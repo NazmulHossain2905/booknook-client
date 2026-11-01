@@ -28,6 +28,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { demoUser } from "@/data";
 import { User } from "@/types";
 import { UserAvatar } from "../shared/book-cover";
 
@@ -73,7 +74,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const user: User = null;
+  const user: User = demoUser;
 
   const links = [...PUBLIC_LINKS, ...(user ? PRIVATE_LINKS : [])];
   const isActive = (href: string) =>
@@ -193,13 +194,13 @@ export function Navbar() {
                 {user ? (
                   <>
                     <div className="flex items-center gap-3">
-                      <UserAvatar src={user.avatar} name={user.name} />
+                      <UserAvatar src={user?.avatar} name={user?.name} />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">
-                          {user.name}
+                          {user?.name}
                         </p>
                         <p className="text-muted-foreground truncate text-xs">
-                          {user.email}
+                          {user?.email}
                         </p>
                       </div>
                     </div>
