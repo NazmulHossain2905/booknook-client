@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { Fraunces, Inter, Geist } from "next/font/google";
-import "./globals.css";
+import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { Fraunces, Geist, Inter } from "next/font/google";
+import "./globals.css";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,11 +28,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+      className={cn("font-sans", geist.variable)}
+    >
       <body
         className={`${inter.variable} ${fraunces.variable} font-sans antialiased`}
       >
         <div className="flex min-h-screen flex-col">
+          <Navbar />
           <main id="main" className="flex-1">
             {children}
           </main>

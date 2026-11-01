@@ -1,9 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 export default function Home() {
-  return (
-    <div>
-      <Button>BookNook Client</Button>
-    </div>
-  );
+  return <div></div>;
 }
