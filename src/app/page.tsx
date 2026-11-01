@@ -1,5 +1,6 @@
 import { CategoryShowcase } from "@/components/home/category-showcase";
 import { CommunitySection } from "@/components/home/community-section";
+import { CtaBand } from "@/components/home/cta-band";
 import { HeroSlider } from "@/components/home/hero-slider";
 import { NewArrivals } from "@/components/home/new-arrivals";
 import { INITIAL_BOOKS } from "@/data";
@@ -13,6 +14,7 @@ export default function Home() {
       <NewArrivals books={books} />
       <CategoryShowcase books={books} />
       <CommunitySection />
+      <CtaBand />
     </>
   );
 }
