@@ -1,4 +1,5 @@
 import { HeroSlider } from "@/components/home/hero-slider";
+import { NewArrivals } from "@/components/home/new-arrivals";
 import { INITIAL_BOOKS } from "@/data";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
   return (
     <>
       <HeroSlider books={books} />
+      <NewArrivals books={books} />
     </>
   );
 }
