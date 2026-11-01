@@ -11,7 +11,8 @@ export const registerSchema = z
       .string()
       .trim()
       .min(1, "Please enter your email.")
-      .email("That doesn't look like a valid email."),
+      .pipe(z.email({ error: "That doesn't look like a valid email." }))
+      .transform((email) => email.toLowerCase()),
     photoUrl: z
       .string()
       .trim()
@@ -33,3 +34,17 @@ export const registerSchema = z
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+/* =========================== Login =================================== */
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "Please enter your email.")
+    .pipe(z.email({ error: "That doesn't look like a valid email." }))
+    .transform((email) => email.toLowerCase()),
+  password: z.string().min(6, "Passwords are at least 6 characters."),
+});
+
+export type LoginFormValues = z.infer<typeof loginSchema>;
