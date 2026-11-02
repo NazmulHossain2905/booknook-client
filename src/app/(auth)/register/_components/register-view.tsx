@@ -66,29 +66,38 @@ export default function RegisterView() {
       });
 
       if (error) {
-        if (error?.code === "VALIDATION_ERROR") {
-          toast.error("Please enter a valid email address.");
-        } else if (error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
-          toast.error(
-            "An account with this email already exists. Please use another email.",
-          );
-        } else {
-          toast.error("Could not create your account", {
-            description: error.message,
-          });
+        switch (error.code) {
+          case "VALIDATION_ERROR":
+            toast.error("Please enter a valid email address.");
+            break;
+
+          case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
+            toast.error(
+              "An account with this email already exists. Please use another email.",
+            );
+            break;
+
+          default:
+            toast.error("Could not create your account", {
+              description: error.message,
+            });
         }
+
         return;
       }
 
-      if (data) {
-        toast.success("Welcome to BookNook", {
-          description: `Your reader's card is ready, ${values.name.split(" ")[0]} — happy browsing.`,
-        });
-
-        router.replace("/login");
+      if (!data) {
+        toast.error("Could not create your account");
+        return;
       }
+
+      toast.success("Welcome to BookNook", {
+        description: `Your reader's card is ready, ${values.name.split(" ")[0]} — happy browsing.`,
+      });
+
+      router.replace("/login");
     } catch (error) {
-      console.error(error);
+      console.error("Registration error:", error);
       toast.error("Something went wrong");
     }
   };

@@ -44,6 +44,7 @@ function LoginContent() {
 
   const onSubmit = async (values: LoginFormValues) => {
     setFormError(null);
+
     try {
       const { data, error } = await signIn.email({
         email: values.email,
@@ -51,20 +52,27 @@ function LoginContent() {
         rememberMe,
       });
 
-      if (data) {
-        toast.success("Welcome back", {
-          description: "Your reading nook kept your place.",
-        });
-        router.replace(redirect);
-      } else {
+      if (error) {
         setFormError(
           error.message ?? "Could not sign you in. Please try again.",
         );
+        return;
       }
 
-      console.log(data, error);
+      if (!data) {
+        setFormError("Could not sign you in. Please try again.");
+        return;
+      }
+
+      toast.success("Welcome back", {
+        description: "Your reading nook kept your place.",
+      });
+
+      router.replace(redirect);
     } catch (error) {
-      console.log(error);
+      console.error("Login error:", error);
+
+      setFormError("Something went wrong. Please try again.");
     }
   };
 
