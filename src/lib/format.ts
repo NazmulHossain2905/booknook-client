@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, format, parseISO } from "date-fns";
+import { differenceInCalendarDays, format, isValid, parseISO } from "date-fns";
 
 export function initials(name: string): string {
   return name
@@ -10,11 +10,16 @@ export function initials(name: string): string {
 }
 
 /** "16 Oct 2026" */
-export function formatDate(iso: string): string {
+
+export function formatDate(value: string | Date): string {
   try {
-    return format(parseISO(iso), "d MMM yyyy");
+    const date = value instanceof Date ? value : parseISO(value);
+
+    if (!isValid(date)) return "Invalid date";
+
+    return format(date, "d MMM yyyy");
   } catch {
-    return iso;
+    return "Invalid date";
   }
 }
 

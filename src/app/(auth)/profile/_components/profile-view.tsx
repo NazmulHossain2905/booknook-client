@@ -108,7 +108,7 @@ function ProfileContent() {
                 </p>
                 <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
                   <CalendarDays aria-hidden className="text-gold size-3.5" />
-                  Member since {formatDate(user.createdAt as any)}
+                  Member since {formatDate(user.createdAt)}
                 </p>
               </div>
             </div>

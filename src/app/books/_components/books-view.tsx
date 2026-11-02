@@ -24,9 +24,9 @@ import {
 } from "@/types";
 import { ArrowUpDown, BookX, LibraryBig, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
-export default function BooksView({ books }: { books: Book[] }) {
+function BooksContent({ books }: { books: Book[] }) {
   usePageTitle("All Books");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -231,5 +231,13 @@ export default function BooksView({ books }: { books: Book[] }) {
         )}
       </div>
     </Container>
+  );
+}
+
+export default function BooksView({ books }: { books: Book[] }) {
+  return (
+    <Suspense fallback={null}>
+      <BooksContent books={books} />
+    </Suspense>
   );
 }
