@@ -79,7 +79,15 @@ function LoginContent() {
   const onGoogle = async () => {
     setGoogleLoading(true);
     try {
-      // await loginWithGoogle();
+      const { data, error } = await signIn.social({
+        provider: "google",
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      console.log(data);
       toast.success("Signed in with Google", {
         description: "Welcome to BookNook — this button is a visual demo.",
       });

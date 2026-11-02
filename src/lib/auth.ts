@@ -12,10 +12,17 @@ const client = new MongoClient(DATABASE_URI);
 const db = client.db("booknook");
 
 export const auth = betterAuth({
+  database: mongodbAdapter(db, { client }),
+
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
   },
 
-  database: mongodbAdapter(db, { client }),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
 });

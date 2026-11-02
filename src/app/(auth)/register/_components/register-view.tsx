@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/hooks/use-page-title";
-import { signUp } from "@/lib/auth-client";
+import { signIn, signUp } from "@/lib/auth-client";
 import { RegisterFormValues, registerSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -105,7 +105,15 @@ export default function RegisterView() {
   const onGoogle = async () => {
     setGoogleLoading(true);
     try {
-      // await loginWithGoogle();
+      const { data, error } = await signIn.social({
+        provider: "google",
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
       toast.success("Registered with Google", {
         description: "This button is a visual demo of social sign-up.",
       });
