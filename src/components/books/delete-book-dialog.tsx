@@ -10,9 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { BASE_URL } from "@/constants";
 import { Book } from "@/types";
 import { Loader2, Trash2 } from "lucide-react";
-import * as React from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface DeleteBookDialogProps {
@@ -26,16 +28,26 @@ export function DeleteBookDialog({
   open,
   onOpenChange,
 }: DeleteBookDialogProps) {
-  const [deleting, setDeleting] = React.useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
 
   const onDelete = async () => {
     if (!book) return;
     setDeleting(true);
     try {
-      // await deleteBook(book.id);
-      // toast.success("Book removed", {
-      //   description: `“${book.title}” has been taken off the shelves.`,
-      // });
+      const res = await fetch(`${BASE_URL}/books/${book._id}`, {
+        method: "DELETE",
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success("Book removed", {
+          description: `“${book.title}” has been taken off the shelves.`,
+        });
+      }
+
+      router.refresh();
       onOpenChange(false);
     } catch {
       toast.error("Could not remove the book", {
@@ -82,7 +94,7 @@ export function DeleteBookDialog({
           </div>
         )}
 
-        <DialogFooter className="mt-2 gap-2 sm:gap-0">
+        <DialogFooter className="mt-2 gap-2">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
