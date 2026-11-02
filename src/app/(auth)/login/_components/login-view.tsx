@@ -15,12 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { signIn } from "@/lib/auth-client";
 import { LoginFormValues, loginSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, KeyRound, Loader2, LogIn, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import * as React from "react";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -30,9 +31,10 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
 
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [googleLoading, setGoogleLoading] = React.useState(false);
-  const [formError, setFormError] = React.useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -42,13 +44,28 @@ function LoginContent() {
 
   const onSubmit = async (values: LoginFormValues) => {
     setFormError(null);
-    // const result = await login(values.email, values.password);
-    // if (result.ok) {
-    //   toast.success("Welcome back", { description: "Your reading nook kept your place." });
-    //   router.replace(redirect);
-    // } else {
-    //   setFormError(result.message ?? "Could not sign you in. Please try again.");
-    // }
+    try {
+      const { data, error } = await signIn.email({
+        email: values.email,
+        password: values.password,
+        rememberMe,
+      });
+
+      if (data) {
+        toast.success("Welcome back", {
+          description: "Your reading nook kept your place.",
+        });
+        router.replace(redirect);
+      } else {
+        setFormError(
+          error.message ?? "Could not sign you in. Please try again.",
+        );
+      }
+
+      console.log(data, error);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onGoogle = async () => {
@@ -157,7 +174,11 @@ function LoginContent() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Checkbox id="remember" defaultChecked />
+                  <Checkbox
+                    id="remember"
+                    onCheckedChange={(v) => setRememberMe(v as boolean)}
+                    defaultChecked={rememberMe}
+                  />
                   <Label
                     htmlFor="remember"
                     className="text-muted-foreground cursor-pointer text-sm font-normal"
@@ -249,8 +270,8 @@ function LoginContent() {
 
 export default function LoginView() {
   return (
-    <React.Suspense fallback={null}>
+    <Suspense fallback={null}>
       <LoginContent />
-    </React.Suspense>
+    </Suspense>
   );
 }
