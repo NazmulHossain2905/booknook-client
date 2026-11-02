@@ -13,7 +13,7 @@ const cover = (isbn: string) =>
 
 export const INITIAL_BOOKS: Book[] = [
   {
-    id: "bk-atomic-habits",
+    _id: "bk-atomic-habits",
     title: "Atomic Habits",
     author: "James Clear",
     category: "Others",
@@ -27,7 +27,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-28T10:15:00.000Z",
   },
   {
-    id: "bk-alchemist",
+    _id: "bk-alchemist",
     title: "The Alchemist",
     author: "Paulo Coelho",
     category: "Fiction",
@@ -41,7 +41,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-24T16:40:00.000Z",
   },
   {
-    id: "bk-cosmos",
+    _id: "bk-cosmos",
     title: "Cosmos",
     author: "Carl Sagan",
     category: "Science",
@@ -55,7 +55,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-19T09:30:00.000Z",
   },
   {
-    id: "bk-guns-germs-steel",
+    _id: "bk-guns-germs-steel",
     title: "Guns, Germs, and Steel",
     author: "Jared Diamond",
     category: "History",
@@ -69,7 +69,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-15T14:05:00.000Z",
   },
   {
-    id: "bk-educated",
+    _id: "bk-educated",
     title: "Educated",
     author: "Tara Westover",
     category: "Others",
@@ -83,7 +83,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-08T11:20:00.000Z",
   },
   {
-    id: "bk-little-prince",
+    _id: "bk-little-prince",
     title: "The Little Prince",
     author: "Antoine de Saint-Exupéry",
     category: "Kids",
@@ -97,7 +97,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-10-03T08:45:00.000Z",
   },
   {
-    id: "bk-midnight-library",
+    _id: "bk-midnight-library",
     title: "The Midnight Library",
     author: "Matt Haig",
     category: "Fiction",
@@ -111,7 +111,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-09-26T18:00:00.000Z",
   },
   {
-    id: "bk-charlottes-web",
+    _id: "bk-charlottes-web",
     title: "Charlotte's Web",
     author: "E. B. White",
     category: "Kids",
@@ -125,7 +125,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-09-20T13:10:00.000Z",
   },
   {
-    id: "bk-sapiens",
+    _id: "bk-sapiens",
     title: "Sapiens",
     author: "Yuval Noah Harari",
     category: "History",
@@ -139,7 +139,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-09-14T15:30:00.000Z",
   },
   {
-    id: "bk-crawdads",
+    _id: "bk-crawdads",
     title: "Where the Crawdads Sing",
     author: "Delia Owens",
     category: "Fiction",
@@ -153,7 +153,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-09-08T09:55:00.000Z",
   },
   {
-    id: "bk-book-thief",
+    _id: "bk-book-thief",
     title: "The Book Thief",
     author: "Markus Zusak",
     category: "Fiction",
@@ -167,7 +167,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-09-02T17:25:00.000Z",
   },
   {
-    id: "bk-brief-history-time",
+    _id: "bk-brief-history-time",
     title: "A Brief History of Time",
     author: "Stephen Hawking",
     category: "Science",
@@ -181,7 +181,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-08-27T12:00:00.000Z",
   },
   {
-    id: "bk-anne-frank",
+    _id: "bk-anne-frank",
     title: "The Diary of a Young Girl",
     author: "Anne Frank",
     category: "History",
@@ -195,7 +195,7 @@ export const INITIAL_BOOKS: Book[] = [
     addedAt: "2026-08-21T10:35:00.000Z",
   },
   {
-    id: "bk-henrietta-lacks",
+    _id: "bk-henrietta-lacks",
     title: "The Immortal Life of Henrietta Lacks",
     author: "Rebecca Skloot",
     category: "Science",

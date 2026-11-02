@@ -201,7 +201,7 @@ function BooksContent() {
         ) : visible.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((book, i) => (
-              <BookCard key={book.id} book={book} priority={i < 3} />
+              <BookCard key={book._id} book={book} priority={i < 3} />
             ))}
           </div>
         ) : (

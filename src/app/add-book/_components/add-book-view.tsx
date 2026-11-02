@@ -4,6 +4,7 @@ import { BookForm } from "@/components/books/book-form";
 import { LivePreview } from "@/components/books/live-preview";
 import { ReadOnlyMemberFields } from "@/components/books/read-only-member";
 import { Container } from "@/components/shared/container";
+import { BASE_URL } from "@/constants";
 import { demoUser } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
 import type { BookFormValues } from "@/schemas/book.schema";
@@ -27,17 +28,36 @@ function AddBookContent() {
   const onSubmit = async (values: BookFormValues) => {
     setSubmitting(true);
     try {
-      // const book = await addBook({
-      //   title: values.title,
-      //   author: values.author,
-      //   category: values.category,
-      //   image: values.image,
-      //   description: values.description,
-      //   totalCopies: values.totalCopies,
-      // });
-      // toast.success("Added to the library", {
-      //   description: `“${book.title}” is now on the ${book.category} shelf, ready for borrowers.`,
-      // });
+      const newBook = {
+        title: values.title,
+        author: values.author,
+        category: values.category,
+        image: values.image,
+        description: values.description,
+        totalCopies: values.totalCopies,
+        availableCopies: values.totalCopies,
+        addedBy: user.name,
+        addedByEmail: user.email,
+      };
+
+      const res = await fetch(`${BASE_URL}/books`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBook),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success("Added to the library", {
+          description: `“${result.data.title}” is now on the ${result.data.category} shelf, ready for borrowers.`,
+        });
+      } else {
+        toast.error(result.message, {
+          description: "The book wasn't added. Please try again.",
+        });
+      }
+
       router.push("/books");
     } catch {
       toast.error("Something went wrong", {
