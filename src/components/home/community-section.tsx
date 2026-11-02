@@ -1,5 +1,3 @@
-"use client";
-
 import { UserAvatar } from "@/components/shared/book-cover";
 import { Container } from "@/components/shared/container";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/shared/reveal";
@@ -46,7 +44,7 @@ export function CommunitySection() {
             <SectionHeading
               eyebrow="More than a catalogue"
               title="A Community of Readers"
-              description="BookNook is built by the people who borrow from it. Every title was carried in by a neighbour who thought someone else should read it too."
+              description="BookNook is built by the people who borrow from it. Every title was carried in by a neighbor who thought someone else should read it too."
             />
 
             <Reveal delay={0.1} className="mt-8">

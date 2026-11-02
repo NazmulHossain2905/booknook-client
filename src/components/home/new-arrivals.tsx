@@ -1,5 +1,3 @@
-"use client";
-
 import { BookCard } from "@/components/books/book-card";
 import { Container } from "@/components/shared/container";
 import { StaggerGroup, StaggerItem } from "@/components/shared/reveal";
@@ -33,7 +31,7 @@ export function NewArrivals({ books }: { books: Book[] }) {
 
         <StaggerGroup className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {latest.map((book, i) => (
-            <StaggerItem key={book.id} className="flex">
+            <StaggerItem key={book._id} className="flex">
               <div className="flex w-full">
                 <BookCard book={book} priority={i < 3} />
               </div>

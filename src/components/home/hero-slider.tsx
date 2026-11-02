@@ -43,7 +43,11 @@ const slides: Slide[] = [
       "A small online library with a big heart — discover well-loved titles, meet fellow readers, and find the story that changes your week.",
     secondary: { label: "Join the Library", href: "/register" },
     meta: "Free to join · 14 curated titles · 5 shelves",
-    bookIds: ["bk-midnight-library", "bk-crawdads", "bk-alchemist"],
+    bookIds: [
+      "6ae82e94b80dda82b06f5b9e",
+      "6ae82e94b80dda82b06f5b9f",
+      "6ae82e94b80dda82b06f5ba0",
+    ],
     backdrop: "pattern-dots",
   },
   {
@@ -54,7 +58,11 @@ const slides: Slide[] = [
       "Reserve a copy in seconds and keep it for a full fortnight. Returning is one click — and the shelf stays generous for the next reader.",
     secondary: { label: "See how it works", href: "/#community" },
     meta: "Two-week loans · No late fees · One-click returns",
-    bookIds: ["bk-cosmos", "bk-brief-history-time", "bk-henrietta-lacks"],
+    bookIds: [
+      "6ae82e94b80dda82b06f5ba1",
+      "6ae82e94b80dda82b06f5ba2",
+      "6ae82e94b80dda82b06f5ba3",
+    ],
     backdrop: "bg-[#edf2ea] dark:bg-[#161d16]",
   },
   {
@@ -65,7 +73,11 @@ const slides: Slide[] = [
       "Add a book from your own collection in under a minute. Give it a home on our shelves and watch readers queue up to borrow it.",
     secondary: { label: "Add a book", href: "/add-book" },
     meta: "Add books in minutes · Own your catalogue · Edit anytime",
-    bookIds: ["bk-atomic-habits", "bk-educated", "bk-guns-germs-steel"],
+    bookIds: [
+      "6ae82e94b80dda82b06f5ba4",
+      "6ae82e94b80dda82b06f5ba5",
+      "6ae82e94b80dda82b06f5ba6",
+    ],
     backdrop: "bg-[#f6efe0] dark:bg-[#1d1a12]",
   },
 ];
@@ -134,7 +146,7 @@ export function HeroSlider({ books }: { books: Book[] }) {
     }
   }, []);
 
-  const byId = useMemo(() => new Map(books.map((b) => [b.id, b])), [books]);
+  const byId = useMemo(() => new Map(books.map((b) => [b._id, b])), [books]);
   const slideBooks = slides.map(
     (s) => s.bookIds.map((id) => byId.get(id)).filter(Boolean) as Book[],
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { Container } from "@/components/shared/container";
 import { Reveal } from "@/components/shared/reveal";
 import { Button } from "@/components/ui/button";

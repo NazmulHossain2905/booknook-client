@@ -3,10 +3,13 @@ import { CommunitySection } from "@/components/home/community-section";
 import { CtaBand } from "@/components/home/cta-band";
 import { HeroSlider } from "@/components/home/hero-slider";
 import { NewArrivals } from "@/components/home/new-arrivals";
-import { INITIAL_BOOKS } from "@/data";
+import { BASE_URL } from "@/constants";
 
-export default function Home() {
-  const books = INITIAL_BOOKS;
+export default async function Home() {
+  const res = await fetch(`${BASE_URL}/books`);
+  const data = await res.json();
+
+  const books = data.data;
 
   return (
     <>
