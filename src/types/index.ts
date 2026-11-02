@@ -10,10 +10,12 @@ export const CATEGORIES: Category[] = [
 
 export interface User {
   id: string;
-  name: string;
+  createdAt: Date;
+  updatedAt: Date;
   email: string;
-  avatar: string;
-  joinedAt: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string | null | undefined;
 }
 
 export interface Book {

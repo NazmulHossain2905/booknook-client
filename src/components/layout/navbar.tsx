@@ -28,8 +28,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { demoUser } from "@/data";
-import { User } from "@/types";
+import { useSession } from "@/lib/auth-client";
 import { UserAvatar } from "../shared/book-cover";
 
 const PUBLIC_LINKS = [
@@ -74,7 +73,9 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const user: User = demoUser;
+  const { data: session, isPending } = useSession();
+
+  const user = session?.user;
 
   const links = [...PUBLIC_LINKS, ...(user ? PRIVATE_LINKS : [])];
   const isActive = (href: string) =>
@@ -123,7 +124,7 @@ export function Navbar() {
                   Add Book
                 </Link>
               </Button>
-              <UserMenu />
+              <UserMenu user={user} />
             </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
@@ -194,7 +195,7 @@ export function Navbar() {
                 {user ? (
                   <>
                     <div className="flex items-center gap-3">
-                      <UserAvatar src={user?.avatar} name={user?.name} />
+                      <UserAvatar src={user?.image!} name={user?.name} />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">
                           {user?.name}

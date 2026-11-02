@@ -9,22 +9,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { demoUser } from "@/data";
+import { signOut } from "@/lib/auth-client";
+import { User } from "@/types";
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-export function UserMenu() {
-  const user = demoUser;
-
+export function UserMenu({ user }: { user: User }) {
   if (!user) return null;
 
-  const handleLogout = () => {};
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      const { data } = await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/login");
+            // router.refresh();
+          },
+        },
+      });
+
+      if (data?.success) {
+        toast.success("Sign-out successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-[3px]">
         <UserAvatar
-          src={user.avatar}
+          src={user.image!}
           name={user.name}
           className="size-9 transition-transform hover:scale-105"
         />
@@ -42,7 +62,11 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          variant="destructive"
+          className="cursor-pointer"
+        >
           <LogOut aria-hidden className="size-4" />
           Log out
         </DropdownMenuItem>
