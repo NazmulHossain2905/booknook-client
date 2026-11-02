@@ -1,2 +1,1 @@
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:5000";
+export const BASE_URL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { signUp } from "@/lib/auth-client";
 import { RegisterFormValues, registerSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -27,7 +28,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { PasswordChecklist } from "./password-checklist";
@@ -37,9 +38,9 @@ export default function RegisterView() {
 
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirm, setShowConfirm] = React.useState(false);
-  const [googleLoading, setGoogleLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -56,22 +57,40 @@ export default function RegisterView() {
   const password = form.watch("password");
 
   const onSubmit = async (values: RegisterFormValues) => {
-    // const result = await register({
-    //   name: values.name,
-    //   email: values.email,
-    //   password: values.password,
-    //   avatar: values.photoUrl || undefined,
-    // });
-    // if (result.ok) {
-    //   toast.success("Welcome to BookNook", {
-    //     description: `Your reader's card is ready, ${values.name.split(" ")[0]} — happy browsing.`,
-    //   });
-    //   router.replace("/");
-    // } else {
-    //   toast.error("Could not create your account", {
-    //     description: result.message,
-    //   });
-    // }
+    try {
+      const { data, error } = await signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        image: values.photoUrl || undefined,
+      });
+
+      if (error) {
+        if (error?.code === "VALIDATION_ERROR") {
+          toast.error("Please enter a valid email address.");
+        } else if (error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+          toast.error(
+            "An account with this email already exists. Please use another email.",
+          );
+        } else {
+          toast.error("Could not create your account", {
+            description: error.message,
+          });
+        }
+        return;
+      }
+
+      if (data) {
+        toast.success("Welcome to BookNook", {
+          description: `Your reader's card is ready, ${values.name.split(" ")[0]} — happy browsing.`,
+        });
+
+        router.replace("/login");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   };
 
   const onGoogle = async () => {
