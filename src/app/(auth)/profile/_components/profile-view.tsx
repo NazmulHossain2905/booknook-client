@@ -35,13 +35,13 @@ function ProfileContent() {
   };
 
   const [name, setName] = useState(user?.name ?? "");
-  const [photoUrl, setPhotoUrl] = useState(user?.avatar ?? "");
+  const [photoUrl, setPhotoUrl] = useState(user?.image ?? "");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
       setName(user.name);
-      setPhotoUrl(user.avatar);
+      setPhotoUrl(user.image!);
     }
   }, [user]);
 
@@ -55,7 +55,7 @@ function ProfileContent() {
   );
   const activeBorrows = myBorrows.filter((b) => b.status === "borrowed");
 
-  const dirty = name.trim() !== user.name || photoUrl.trim() !== user.avatar;
+  const dirty = name.trim() !== user.name || photoUrl.trim() !== user.image;
 
   const onSave = async () => {
     if (name.trim().length < 2) {
@@ -94,7 +94,7 @@ function ProfileContent() {
           >
             <div className="flex flex-wrap items-center gap-5">
               <UserAvatar
-                src={photoUrl || user.avatar}
+                src={photoUrl || user.image!}
                 name={name || user.name}
                 className="size-20"
               />
@@ -108,7 +108,7 @@ function ProfileContent() {
                 </p>
                 <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
                   <CalendarDays aria-hidden className="text-gold size-3.5" />
-                  Member since {formatDate(user.joinedAt)}
+                  Member since {formatDate(user.createdAt as any)}
                 </p>
               </div>
             </div>
