@@ -32,3 +32,22 @@ export interface Book {
   /** ISO date the book was added */
   addedAt: string;
 }
+
+export type BorrowStatus = "borrowed" | "returned";
+
+export interface BorrowRecord {
+  id: string;
+  bookId: string;
+  /** Snapshot of book details so deleted books still render in history */
+  bookTitle: string;
+  bookImage: string;
+  bookAuthor: string;
+  userEmail: string;
+  /** ISO date the book was borrowed */
+  borrowDate: string;
+  /** ISO date the book is due back */
+  returnDate: string;
+  /** ISO date the book was actually returned, null while still on loan */
+  returnedAt: string | null;
+  status: BorrowStatus;
+}
