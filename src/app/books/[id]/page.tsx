@@ -1,4 +1,4 @@
-import { INITIAL_BOOKS } from "@/data";
+import { BASE_URL } from "@/constants";
 import type { Metadata } from "next";
 import BookDetailsView from "./_components/book-details-view";
 
@@ -10,7 +10,12 @@ export async function generateMetadata({
   params,
 }: BookPageProps): Promise<Metadata> {
   const { id } = await params;
-  const book = INITIAL_BOOKS.find((b) => b.id === id);
+
+  const res = await fetch(`${BASE_URL}/books/${id}`);
+  const data = await res.json();
+
+  const book = data.data;
+
   return {
     title: book ? book.title : "Book Details",
     description: book
@@ -20,5 +25,12 @@ export async function generateMetadata({
 }
 
 export default async function BookDetailsPage({ params }: BookPageProps) {
-  return <BookDetailsView />;
+  const { id } = await params;
+
+  const res = await fetch(`${BASE_URL}/books/${id}`);
+  const data = await res.json();
+
+  const book = data.data;
+
+  return <BookDetailsView book={book} />;
 }

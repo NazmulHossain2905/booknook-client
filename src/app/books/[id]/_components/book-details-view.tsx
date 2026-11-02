@@ -1,6 +1,5 @@
 "use client";
 
-import { BookCard } from "@/components/books/book-card";
 import { BorrowDialog } from "@/components/books/borrow-dialog";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { BookCover, UserAvatar } from "@/components/shared/book-cover";
@@ -22,27 +21,20 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BookDetailsSkeleton } from "./book-details-skeleton";
 
-export default function BookDetailsView() {
-  const params = useParams<{ id: string }>();
+export default function BookDetailsView({ book }: { book: Book }) {
   const router = useRouter();
-  const {
-    books,
-    borrows,
-    user,
-  }: { books: Book[]; borrows: BorrowRecord[]; user: User } = {
-    books: [],
+  const { borrows, user }: { borrows: BorrowRecord[]; user: User } = {
     borrows: [],
     user: demoUser,
   };
   const loading = useSimulatedLoading(600);
   const [borrowOpen, setBorrowOpen] = useState(false);
 
-  const book = books.find((b) => b.id === params.id);
   usePageTitle(book ? book.title : "Book Details");
 
   const alreadyBorrowed = useMemo(
@@ -51,19 +43,19 @@ export default function BookDetailsView() {
       !!user &&
       borrows.some(
         (b) =>
-          b.bookId === book.id &&
+          b.bookId === book._id &&
           b.userEmail.toLowerCase() === user.email.toLowerCase() &&
           b.status === "borrowed",
       ),
     [book, borrows, user],
   );
 
-  const related = useMemo(() => {
-    if (!book) return [];
-    return books
-      .filter((b) => b.category === book.category && b.id !== book.id)
-      .slice(0, 4);
-  }, [books, book]);
+  // const related = useMemo(() => {
+  //   if (!book) return [];
+  //   return books
+  //     .filter((b) => b.category === book.category && b._id !== book._id)
+  //     .slice(0, 4);
+  // }, [books, book]);
 
   if (loading) return <BookDetailsSkeleton />;
 
@@ -104,7 +96,9 @@ export default function BookDetailsView() {
         description:
           "Create a free account or use the demo login — we'll bring you right back.",
       });
-      router.push(`/login?redirect=${encodeURIComponent(`/books/${book.id}`)}`);
+      router.push(
+        `/login?redirect=${encodeURIComponent(`/books/${book._id}`)}`,
+      );
       return;
     }
     if (alreadyBorrowed) {
@@ -285,7 +279,7 @@ export default function BookDetailsView() {
       </div>
 
       {/* Related */}
-      {related.length > 0 && (
+      {/* {related.length > 0 && (
         <section
           aria-labelledby="related-heading"
           className="mt-16 border-t pt-12 sm:mt-20"
@@ -303,11 +297,11 @@ export default function BookDetailsView() {
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((b) => (
-              <BookCard key={b.id} book={b} />
+              <BookCard key={b._id} book={b} />
             ))}
           </div>
         </section>
-      )}
+      )} */}
 
       <BorrowDialog
         book={book}

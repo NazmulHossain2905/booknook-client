@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { INITIAL_BOOKS } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { cn } from "@/lib/utils";
@@ -25,11 +24,10 @@ import {
 } from "@/types";
 import { ArrowUpDown, BookX, LibraryBig, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-function BooksContent() {
+export default function BooksView({ books }: { books: Book[] }) {
   usePageTitle("All Books");
-  const books: Book[] = INITIAL_BOOKS;
   const router = useRouter();
   const searchParams = useSearchParams();
   const loading = useSimulatedLoading(650);
@@ -233,13 +231,5 @@ function BooksContent() {
         )}
       </div>
     </Container>
-  );
-}
-
-export default function BooksView() {
-  return (
-    <Suspense fallback={null}>
-      <BooksContent />
-    </Suspense>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { BookCover } from "@/components/shared/book-cover";
 import { CategoryBadge } from "@/components/shared/category-badge";
@@ -8,7 +6,6 @@ import { Book } from "@/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-/** The canonical book card used in every grid across the app. */
 export function BookCard({
   book,
   priority = false,
@@ -19,7 +16,7 @@ export function BookCard({
   return (
     <article className="group bg-card hover:shadow-primary/10 flex h-full flex-col overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       <Link
-        href={`/books/${book.id}`}
+        href={`/books/${book._id}`}
         className="focus-visible:ring-ring/50 relative block overflow-hidden rounded-lg outline-none focus-visible:ring-[3px]"
       >
         <div className="relative overflow-hidden rounded-lg">
@@ -40,7 +37,7 @@ export function BookCard({
       <div className="flex flex-1 flex-col px-1.5 pt-4 pb-1">
         <h3 className="font-display text-lg leading-snug font-semibold tracking-tight">
           <Link
-            href={`/books/${book.id}`}
+            href={`/books/${book._id}`}
             className="hover:text-primary focus-visible:ring-ring/50 transition-colors outline-none focus-visible:ring-[3px]"
           >
             {book.title}
@@ -60,7 +57,7 @@ export function BookCard({
           variant="outline"
           className="group-hover:border-primary/40 group-hover:bg-primary group-hover:text-primary-foreground mt-4 w-full"
         >
-          <Link href={`/books/${book.id}`}>
+          <Link href={`/books/${book._id}`}>
             View Details
             <ArrowRight
               aria-hidden
