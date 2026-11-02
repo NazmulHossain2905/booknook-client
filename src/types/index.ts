@@ -51,3 +51,12 @@ export interface BorrowRecord {
   returnedAt: string | null;
   status: BorrowStatus;
 }
+
+export type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
+
+export const SORT_LABELS: Record<SortOption, string> = {
+  newest: "Newest first",
+  oldest: "Oldest first",
+  "title-asc": "Title A–Z",
+  "title-desc": "Title Z–A",
+};
