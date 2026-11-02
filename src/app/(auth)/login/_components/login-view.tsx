@@ -77,21 +77,27 @@ function LoginContent() {
   };
 
   const onGoogle = async () => {
+    setFormError(null);
     setGoogleLoading(true);
     try {
-      const { data, error } = await signIn.social({
+      const { error } = await signIn.social({
         provider: "google",
+        // Where Google sends the user back after consent.
+        callbackURL: redirect,
+        // If Google denies access, land back here with the
+        // intended destination still in the URL.
+        errorCallbackURL: `/login?redirect=${encodeURIComponent(redirect)}`,
       });
 
       if (error) {
-        toast.error(error.message);
+        setFormError(
+          error.message ?? "Could not start Google sign-in. Please try again.",
+        );
         return;
       }
-      console.log(data);
-      toast.success("Signed in with Google", {
-        description: "Welcome to BookNook — this button is a visual demo.",
-      });
-      router.replace(redirect);
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setFormError("Something went wrong. Please try again.");
     } finally {
       setGoogleLoading(false);
     }

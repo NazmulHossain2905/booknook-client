@@ -105,19 +105,20 @@ export default function RegisterView() {
   const onGoogle = async () => {
     setGoogleLoading(true);
     try {
-      const { data, error } = await signIn.social({
+      const { error } = await signIn.social({
         provider: "google",
+        // Where Google sends the user back after consent.
+        callbackURL: "/",
+        // If Google denies access, land back on the register page.
+        errorCallbackURL: "/register",
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error(
+          error.message ?? "Could not start Google sign-in. Please try again.",
+        );
         return;
       }
-
-      toast.success("Registered with Google", {
-        description: "This button is a visual demo of social sign-up.",
-      });
-      router.replace("/");
     } finally {
       setGoogleLoading(false);
     }
@@ -125,8 +126,6 @@ export default function RegisterView() {
 
   return (
     <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      {/* Visual panel (mirrored to the left on this page) */}
-
       <AuthVisual
         covers={[
           "https://wsrv.nl/?url=covers.openlibrary.org/b/isbn/9780735211292-L.jpg&w=480&fit=cover",
