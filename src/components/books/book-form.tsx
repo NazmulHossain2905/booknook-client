@@ -233,7 +233,7 @@ export function BookForm({
                   onChange={(event) => {
                     const value = event.currentTarget.value;
 
-                    field.onChange(value === "" ? Number.NaN : Number(value));
+                    field.onChange(value === "" ? "" : Number(value));
                   }}
                 />
               </FormControl>

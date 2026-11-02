@@ -1,4 +1,7 @@
+import { BASE_URL } from "@/constants";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import MyBooksView from "./_components/my-books-view";
 
 export const metadata: Metadata = {
@@ -6,6 +9,17 @@ export const metadata: Metadata = {
   description: "Manage the books you have added to the BookNook library.",
 };
 
-export default function MyBooksPage() {
-  return <MyBooksView />;
+export default async function MyBooksPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+
+  const res = await fetch(`${BASE_URL}/my-books/${user?.email}`);
+  const data = await res.json();
+
+  const myBooks = data.data;
+
+  return <MyBooksView myBooks={myBooks} />;
 }

@@ -8,8 +8,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { BASE_URL } from "@/constants";
 import { BookFormValues } from "@/schemas/book.schema";
 import { Book } from "@/types";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,29 +21,48 @@ interface EditBookSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
-/** Side drawer for editing a book you added. */
 export function EditBookSheet({
   book,
   open,
   onOpenChange,
 }: EditBookSheetProps) {
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (values: BookFormValues) => {
     if (!book) return;
+
     setSubmitting(true);
+
     try {
-      // await updateBook(book.id, {
-      //   title: values.title,
-      //   author: values.author,
-      //   category: values.category,
-      //   image: values.image,
-      //   description: values.description,
-      //   totalCopies: values.totalCopies,
-      // });
-      // toast.success("Book updated", {
-      //   description: `“${values.title}” now reflects your changes on the shelves.`,
-      // });
+      const updatedBook = {
+        title: values.title,
+        author: values.author,
+        category: values.category,
+        image: values.image,
+        description: values.description,
+        totalCopies: values.totalCopies,
+      };
+
+      const res = await fetch(`${BASE_URL}/books/${book._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedBook),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success("Book updated", {
+          description: `“${values.title}” now reflects your changes on the shelves.`,
+        });
+      } else {
+        toast.error(result.message, {
+          description: "The book wasn't added. Please try again.",
+        });
+      }
+
+      router.refresh();
       onOpenChange(false);
     } catch {
       toast.error("Could not save changes", {
@@ -71,7 +92,7 @@ export function EditBookSheet({
         <div className="p-6">
           {book && (
             <BookForm
-              key={book.id + String(open)}
+              key={book._id + String(open)}
               defaultValues={{
                 title: book.title,
                 author: book.author,

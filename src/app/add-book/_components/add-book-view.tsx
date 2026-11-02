@@ -5,8 +5,8 @@ import { LivePreview } from "@/components/books/live-preview";
 import { ReadOnlyMemberFields } from "@/components/books/read-only-member";
 import { Container } from "@/components/shared/container";
 import { BASE_URL } from "@/constants";
-import { demoUser } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { useSession } from "@/lib/auth-client";
 import type { BookFormValues } from "@/schemas/book.schema";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -14,7 +14,10 @@ import { toast } from "sonner";
 
 function AddBookContent() {
   usePageTitle("Add Book");
-  const user = demoUser;
+
+  const { data: session, isPending } = useSession();
+
+  const user = session?.user;
 
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -36,8 +39,8 @@ function AddBookContent() {
         description: values.description,
         totalCopies: values.totalCopies,
         availableCopies: values.totalCopies,
-        addedBy: user.name,
-        addedByEmail: user.email,
+        addedBy: user?.name,
+        addedByEmail: user?.email,
       };
 
       const res = await fetch(`${BASE_URL}/books`, {

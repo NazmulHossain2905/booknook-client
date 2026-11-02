@@ -20,12 +20,12 @@ export default function MobileCards({
     <div className="grid gap-4 md:hidden">
       {books.map((book) => (
         <article
-          key={book.id}
+          key={book._id}
           className="bg-card rounded-2xl border p-4 shadow-sm"
         >
           <div className="flex gap-4">
             <Link
-              href={`/books/${book.id}`}
+              href={`/books/${book._id}`}
               aria-label={`View ${book.title}`}
               className="w-16 shrink-0 overflow-hidden rounded-md shadow-sm"
             >
@@ -37,7 +37,7 @@ export default function MobileCards({
             </Link>
             <div className="min-w-0 flex-1">
               <Link
-                href={`/books/${book.id}`}
+                href={`/books/${book._id}`}
                 className="font-display hover:text-primary text-base leading-snug font-semibold"
               >
                 {book.title}

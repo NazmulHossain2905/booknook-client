@@ -1,12 +1,10 @@
 "use client";
-
 import { DeleteBookDialog } from "@/components/books/delete-book-dialog";
 import { EditBookSheet } from "@/components/books/edit-book-sheet";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
 
-import { demoUser, INITIAL_BOOKS } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { cn } from "@/lib/utils";
@@ -14,13 +12,11 @@ import { Book, CATEGORIES, Category } from "@/types";
 import { BookMarked, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { MyBooksSkeleton } from "./book-skeleton";
-import { DesktopTable } from "./destop-table";
+import { DesktopTable } from "./desktop-table";
 import MobileCards from "./mobile-cards";
 
-function MyBooksContent() {
+export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
   usePageTitle("My Books");
-  const user = demoUser;
-  const books = INITIAL_BOOKS;
 
   const loading = useSimulatedLoading(600);
 
@@ -28,13 +24,6 @@ function MyBooksContent() {
   const [category, setCategory] = useState<Category | "All">("All");
   const [editing, setEditing] = useState<Book | null>(null);
   const [deleting, setDeleting] = useState<Book | null>(null);
-
-  const myBooks = useMemo(() => {
-    if (!user) return [];
-    return books.filter(
-      (b) => b.addedByEmail.toLowerCase() === user.email.toLowerCase(),
-    );
-  }, [books, user]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -177,8 +166,4 @@ function MyBooksContent() {
       />
     </Container>
   );
-}
-
-export default function MyBooksView() {
-  return <MyBooksContent />;
 }

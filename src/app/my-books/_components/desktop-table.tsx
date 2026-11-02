@@ -37,11 +37,11 @@ export function DesktopTable({
         </TableHeader>
         <TableBody>
           {books.map((book) => (
-            <TableRow key={book.id} className="group">
+            <TableRow key={book._id} className="group">
               <TableCell className="pl-6">
                 <div className="flex items-center gap-4 py-2">
                   <Link
-                    href={`/books/${book.id}`}
+                    href={`/books/${book._id}`}
                     aria-label={`View ${book.title}`}
                     className="focus-visible:ring-ring/50 w-10 shrink-0 overflow-hidden rounded-md shadow-sm transition-transform outline-none hover:scale-105 focus-visible:ring-[3px]"
                   >
@@ -53,7 +53,7 @@ export function DesktopTable({
                   </Link>
                   <div className="min-w-0">
                     <Link
-                      href={`/books/${book.id}`}
+                      href={`/books/${book._id}`}
                       className="font-display hover:text-primary text-[15px] leading-snug font-semibold"
                     >
                       {book.title}
