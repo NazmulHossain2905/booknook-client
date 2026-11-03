@@ -9,7 +9,6 @@ import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
 import { MOCK_CONTRIBUTORS } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
 import { Book, BorrowRecord } from "@/types";
@@ -26,7 +25,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { BookDetailsSkeleton } from "./book-details-skeleton";
 
 export default function BookDetailsView({
   book,
@@ -42,7 +40,6 @@ export default function BookDetailsView({
   const { data: session } = useSession();
   const user = session?.user;
 
-  const loading = useSimulatedLoading(600);
   const [borrowOpen, setBorrowOpen] = useState(false);
 
   usePageTitle(book ? book.title : "Book Details");
@@ -66,8 +63,6 @@ export default function BookDetailsView({
       .filter((b) => b.category === book.category && b._id !== book._id)
       .slice(0, 4);
   }, [books, book]);
-
-  if (loading) return <BookDetailsSkeleton />;
 
   if (!book) {
     return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { BookCard } from "@/components/books/book-card";
-import { BookGridSkeleton } from "@/components/shared/book-grid-skeleton";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePageTitle } from "@/hooks/use-page-title";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { cn } from "@/lib/utils";
 import {
   Book,
@@ -30,7 +28,6 @@ function BooksContent({ books }: { books: Book[] }) {
   usePageTitle("All Books");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const loading = useSimulatedLoading(650);
 
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | "All">(() => {
@@ -194,9 +191,7 @@ function BooksContent({ books }: { books: Book[] }) {
 
       {/* Grid */}
       <div className="mt-4">
-        {loading ? (
-          <BookGridSkeleton count={6} />
-        ) : visible.length > 0 ? (
+        {visible.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((book, i) => (
               <BookCard key={book._id} book={book} priority={i < 3} />
