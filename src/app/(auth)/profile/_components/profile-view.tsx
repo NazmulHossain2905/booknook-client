@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { updateUser, useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
-import { Book, BorrowRecord } from "@/types";
+import { Book, BorrowRecord, User } from "@/types";
 import {
   BookMarked,
   BookOpen,
@@ -19,8 +19,120 @@ import {
   ScrollText,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { ProfileSkeleton } from "./profile-skeleton";
+
+/** Identity card — remounted per user so its edits always start from the
+    session's current values (React's keyed-reset pattern, no sync effect). */
+function ProfileEditorCard({ user }: { user: User }) {
+  const [name, setName] = useState(user.name);
+  const [photoUrl, setPhotoUrl] = useState(user.image ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const dirty =
+    name.trim() !== user.name || photoUrl.trim() !== (user.image ?? "");
+
+  const onSave = async () => {
+    if (name.trim().length < 2) {
+      toast.error("Name too short", {
+        description: "Your display name needs at least 2 characters.",
+      });
+      return;
+    }
+    setSaving(true);
+
+    const { data, error } = await updateUser({ name, image: photoUrl });
+
+    if (data?.status) {
+      toast.success("Profile updated", {
+        description: "Your reader's card has been reprinted.",
+      });
+    }
+
+    if (error?.message) {
+      toast.error("Couldn't update", {
+        description: error.message ?? "Failed to update",
+      });
+    }
+
+    setSaving(false);
+  };
+
+  return (
+    <section
+      aria-label="Profile details"
+      className="bg-card rounded-2xl border p-6 shadow-sm sm:p-8"
+    >
+      <div className="flex flex-wrap items-center gap-5">
+        <UserAvatar
+          src={photoUrl || user.image}
+          name={name || user.name}
+          className="size-20"
+        />
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl leading-tight font-semibold">
+            {name || user.name}
+          </h2>
+          <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
+            <Mail aria-hidden className="size-3.5" />
+            {user.email}
+          </p>
+          <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
+            <CalendarDays aria-hidden className="text-gold size-3.5" />
+            Member since {formatDate(user.createdAt)}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 space-y-5 border-t pt-6">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="profile-name">Display name</Label>
+            <Input
+              id="profile-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="profile-photo">Photo URL</Label>
+            <Input
+              id="profile-photo"
+              type="url"
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
+              placeholder="https://…"
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground text-xs">
+            {dirty ? "You have unsaved changes." : "Your card is up to date."}
+          </p>
+          <Button
+            onClick={onSave}
+            disabled={!dirty || saving}
+            className="rounded-full"
+          >
+            {saving ? (
+              <>
+                <Loader2 aria-hidden className="size-4 animate-spin" />
+                Saving…
+              </>
+            ) : (
+              <>
+                <Save aria-hidden className="size-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function ProfileContent({
   books,
@@ -33,138 +145,30 @@ function ProfileContent({
   const { data: session, isPending } = useSession();
   const user = session?.user;
 
-  const [name, setName] = useState(user?.name ?? "");
-  const [photoUrl, setPhotoUrl] = useState(user?.image ?? "");
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setPhotoUrl(user.image!);
-    }
-  }, [user]);
+  // Route data (books/ borrows) streams in via loading.tsx; while the client
+  // session card is still loading, mirror the same skeleton.
+  if (isPending) return <ProfileSkeleton />;
 
   if (!user) return null;
 
   const activeBorrows = borrows.filter((b) => b.status === "borrowed");
 
-  const dirty = name.trim() !== user.name || photoUrl.trim() !== user.image;
-
-  const onSave = async () => {
-    if (name.trim().length < 2) {
-      toast.error("Name too short", {
-        description: "Your display name needs at least 2 characters.",
-      });
-      return;
-    }
-    setSaving(true);
-    await new Promise((r) => setTimeout(r, 600));
-
-    const { data, error } = await updateUser({ name, image: photoUrl });
-
-    if (data?.status) {
-      toast.success("Profile updated", {
-        description: "Your reader's card has been reprinted.",
-      });
-    }
-
-    if (error?.message) {
-      toast.success("Couldn't update", {
-        description: error.message ?? "Failed to update",
-      });
-    }
-
-    setSaving(false);
-  };
-
   return (
     <Container size="default" className="py-10 sm:py-14">
       <header className="max-w-2xl">
-        <p className="eyebrow">Your reader's card</p>
+        <p className="eyebrow">Your reader&apos;s card</p>
         <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
           My Profile
         </h1>
         <p className="text-muted-foreground mt-4 text-base leading-relaxed">
-          A little bit about you, and everything you've brought to the library.
+          A little bit about you, and everything you&apos;ve brought to the library.
         </p>
       </header>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         {/* Left: identity + edit */}
         <div className="space-y-6">
-          <section
-            aria-label="Profile details"
-            className="bg-card rounded-2xl border p-6 shadow-sm sm:p-8"
-          >
-            <div className="flex flex-wrap items-center gap-5">
-              <UserAvatar
-                src={photoUrl || user.image!}
-                name={name || user.name}
-                className="size-20"
-              />
-              <div className="min-w-0">
-                <h2 className="font-display text-2xl leading-tight font-semibold">
-                  {name || user.name}
-                </h2>
-                <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-                  <Mail aria-hidden className="size-3.5" />
-                  {user.email}
-                </p>
-                <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
-                  <CalendarDays aria-hidden className="text-gold size-3.5" />
-                  Member since {formatDate(user.createdAt)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-5 border-t pt-6">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="profile-name">Display name</Label>
-                  <Input
-                    id="profile-name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="profile-photo">Photo URL</Label>
-                  <Input
-                    id="profile-photo"
-                    type="url"
-                    value={photoUrl}
-                    onChange={(e) => setPhotoUrl(e.target.value)}
-                    placeholder="https://…"
-                  />
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-muted-foreground text-xs">
-                  {dirty
-                    ? "You have unsaved changes."
-                    : "Your card is up to date."}
-                </p>
-                <Button
-                  onClick={onSave}
-                  disabled={!dirty || saving}
-                  className="rounded-full"
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 aria-hidden className="size-4 animate-spin" />
-                      Saving…
-                    </>
-                  ) : (
-                    <>
-                      <Save aria-hidden className="size-4" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </section>
+          <ProfileEditorCard key={user.id} user={user} />
 
           {/* Quick links */}
           <div className="grid gap-4 sm:grid-cols-2">
@@ -180,7 +184,7 @@ function ProfileContent({
                   Manage my books
                 </span>
                 <span className="text-muted-foreground block text-xs">
-                  Edit or remove titles you've added
+                  Edit or remove titles you&apos;ve added
                 </span>
               </span>
             </Link>
@@ -194,7 +198,7 @@ function ProfileContent({
               <span>
                 <span className="block text-sm font-semibold">My borrows</span>
                 <span className="text-muted-foreground block text-xs">
-                  Return books you've finished
+                  Return books you&apos;ve finished
                 </span>
               </span>
             </Link>
