@@ -12,11 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { demoUser } from "@/data";
+import { BASE_URL } from "@/constants";
+import { useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
 import { Book } from "@/types";
 import { CalendarDays, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 interface BorrowDialogProps {
   book: Book;
@@ -27,8 +30,12 @@ interface BorrowDialogProps {
 export const LOAN_DAYS = 14;
 
 export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
-  const user = demoUser;
   const [submitting, setSubmitting] = useState(false);
+
+  const router = useRouter();
+
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const dueDate = useMemo(() => {
     const now = new Date();
@@ -39,21 +46,45 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
 
   const onConfirm = async () => {
     setSubmitting(true);
-    // try {
-    //   const result = await borrowBook(book);
-    //   if (result.ok) {
-    //     toast.success("Borrowed!", {
-    //       description: `“${book.title}” is yours until ${dueDate}. Happy reading!`,
-    //     });
-    //     onOpenChange(false);
-    //   } else {
-    //     toast.error("Could not borrow this book", {
-    //       description: result.message ?? "Please try again in a moment.",
-    //     });
-    //   }
-    // } finally {
-    //   setSubmitting(false);
-    // }
+
+    const newBorrow = {
+      bookId: book._id,
+      bookTitle: book.title,
+      bookImage: book.image,
+      bookAuthor: book.author,
+      userEmail: user?.email,
+    };
+
+    try {
+      const res = await fetch(`${BASE_URL}/borrows`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBorrow),
+      });
+
+      const result = await res.json().catch(() => null);
+
+      if (res.ok && result?.success) {
+        toast.success("Borrowed!", {
+          description: `“${book.title}” is yours until ${dueDate}. Happy reading!`,
+        });
+        onOpenChange(false);
+        router.refresh();
+      } else {
+        toast.error("Could not borrow this book", {
+          description:
+            result?.message ?? "Something went wrong. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Borrow request failed:", error);
+      toast.error("Could not borrow this book", {
+        description:
+          "We couldn't reach the library server. Check your connection and try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!user) return null;

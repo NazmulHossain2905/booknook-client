@@ -38,7 +38,7 @@ export interface Book {
 export type BorrowStatus = "borrowed" | "returned";
 
 export interface BorrowRecord {
-  id: string;
+  _id: string;
   bookId: string;
   /** Snapshot of book details so deleted books still render in history */
   bookTitle: string;

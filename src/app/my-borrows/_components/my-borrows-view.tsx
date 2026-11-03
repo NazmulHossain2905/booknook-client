@@ -10,35 +10,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { demoUser, INITIAL_BORROWS } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { BorrowRecord } from "@/types";
 import { BookOpen, BookPlus, ScrollText } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { BorrowCard } from "./borrow-card";
 import { BorrowRow } from "./borrow-row";
 import { MyBorrowsSkeleton } from "./my-borrow-skeleton";
 
-export default function MyBorrowsView() {
+export default function MyBorrowsView({
+  borrows,
+}: {
+  borrows: BorrowRecord[];
+}) {
   usePageTitle("My Borrows");
-  const user = demoUser;
-  const borrows: BorrowRecord[] = INITIAL_BORROWS;
+
   const loading = useSimulatedLoading(600);
   const [returning, setReturning] = useState<BorrowRecord | null>(null);
 
-  const myBorrows = useMemo(() => {
-    if (!user) return [];
-    return borrows
-      .filter((b) => b.userEmail.toLowerCase() === user.email.toLowerCase())
-      .sort((a, b) => {
-        if (a.status !== b.status) return a.status === "borrowed" ? -1 : 1;
-        return +new Date(b.borrowDate) - +new Date(a.borrowDate);
-      });
-  }, [borrows, user]);
-
-  const active = myBorrows.filter((b) => b.status === "borrowed");
-  const returned = myBorrows.filter((b) => b.status === "returned");
+  const active = borrows.filter((b) => b.status === "borrowed");
+  const returned = borrows.filter((b) => b.status === "returned");
 
   return (
     <Container size="wide" className="py-10 sm:py-14">
@@ -57,7 +49,7 @@ export default function MyBorrowsView() {
         <div className="mt-8">
           <MyBorrowsSkeleton />
         </div>
-      ) : myBorrows.length === 0 ? (
+      ) : borrows.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             icon={ScrollText}
@@ -113,9 +105,9 @@ export default function MyBorrowsView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {myBorrows.map((record) => (
+                {borrows.map((record) => (
                   <BorrowRow
-                    key={record.id}
+                    key={record._id}
                     record={record}
                     onReturn={setReturning}
                   />
@@ -126,9 +118,9 @@ export default function MyBorrowsView() {
 
           {/* Cards (mobile) */}
           <div className="mt-6 grid gap-4 md:hidden">
-            {myBorrows.map((record) => (
+            {borrows.map((record) => (
               <BorrowCard
-                key={record.id}
+                key={record._id}
                 record={record}
                 onReturn={setReturning}
               />

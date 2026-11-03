@@ -1,4 +1,4 @@
-import { Book, BorrowRecord, User } from "@/types";
+import { BorrowRecord, User } from "@/types";
 
 export const demoUser: User = {
   image: "https://avatars.githubusercontent.com/u/110978821?v=4",
@@ -13,208 +13,9 @@ export const demoUser: User = {
 const cover = (isbn: string) =>
   `https://wsrv.nl/?url=covers.openlibrary.org/b/isbn/${isbn}-L.jpg&w=480&fit=cover`;
 
-export const INITIAL_BOOKS: Book[] = [
-  {
-    _id: "bk-atomic-habits",
-    title: "Atomic Habits",
-    author: "James Clear",
-    category: "Others",
-    image: cover("9780735211292"),
-    description:
-      "A practical framework for building good habits and breaking bad ones. James Clear shows how tiny changes in behaviour compound into remarkable results, pairing psychology and neuroscience with stories from athletes, artists and business leaders.",
-    totalCopies: 3,
-    availableCopies: 2,
-    addedBy: "Alex Morgan",
-    addedByEmail: "alex@example.com",
-    addedAt: "2026-10-28T10:15:00.000Z",
-  },
-  {
-    _id: "bk-alchemist",
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    category: "Fiction",
-    image: cover("9780062315007"),
-    description:
-      "Santiago, a young Andalusian shepherd, travels from Spain to the Egyptian desert in search of a treasure buried at the pyramids. Along the way he meets an alchemist who teaches him to listen to his heart and read the omens scattered through life.",
-    totalCopies: 5,
-    availableCopies: 5,
-    addedBy: "Priya Sharma",
-    addedByEmail: "priya@example.com",
-    addedAt: "2026-10-24T16:40:00.000Z",
-  },
-  {
-    _id: "bk-cosmos",
-    title: "Cosmos",
-    author: "Carl Sagan",
-    category: "Science",
-    image: cover("9780345539434"),
-    description:
-      "Carl Sagan's landmark journey through fourteen billion years of cosmic evolution, weaving astronomy, biology, philosophy and history into a single story about who we are and how we came to be — a classic that turned millions of readers into stargazers.",
-    totalCopies: 2,
-    availableCopies: 1,
-    addedBy: "Daniel Chen",
-    addedByEmail: "daniel@example.com",
-    addedAt: "2026-10-19T09:30:00.000Z",
-  },
-  {
-    _id: "bk-guns-germs-steel",
-    title: "Guns, Germs, and Steel",
-    author: "Jared Diamond",
-    category: "History",
-    image: cover("9780393354324"),
-    description:
-      "Why did Eurasian societies conquer, displace or assimilate others? Jared Diamond argues that geography, agriculture and the luck of domesticable plants and animals — not race — shaped the fates of human societies over 13,000 years.",
-    totalCopies: 4,
-    availableCopies: 3,
-    addedBy: "Priya Sharma",
-    addedByEmail: "priya@example.com",
-    addedAt: "2026-10-15T14:05:00.000Z",
-  },
-  {
-    _id: "bk-educated",
-    title: "Educated",
-    author: "Tara Westover",
-    category: "Others",
-    image: cover("9780399590504"),
-    description:
-      "Tara Westover grew up in a survivalist family in rural Idaho, never setting foot in a classroom until seventeen. This unforgettable memoir traces her journey from a scrap-heap in the mountains to the lecture halls of Cambridge — and the cost of claiming an education of her own.",
-    totalCopies: 2,
-    availableCopies: 2,
-    addedBy: "Alex Morgan",
-    addedByEmail: "alex@example.com",
-    addedAt: "2026-10-08T11:20:00.000Z",
-  },
-  {
-    _id: "bk-little-prince",
-    title: "The Little Prince",
-    author: "Antoine de Saint-Exupéry",
-    category: "Kids",
-    image: cover("9780156012195"),
-    description:
-      "A pilot stranded in the Sahara meets a young prince from a tiny asteroid. Beneath its fairy-tale surface, Saint-Exupéry's beloved story carries gentle lessons about love, loss, and seeing rightly with the heart rather than the eyes.",
-    totalCopies: 6,
-    availableCopies: 5,
-    addedBy: "Alex Morgan",
-    addedByEmail: "alex@example.com",
-    addedAt: "2026-10-03T08:45:00.000Z",
-  },
-  {
-    _id: "bk-midnight-library",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    category: "Fiction",
-    image: cover("9780525559474"),
-    description:
-      "Nora Seed's life has gone wrong in every way that matters — until she finds herself in a library between life and death, where the books on endless shelves let her try out the lives she could have lived. A story about regret, hope, and what makes a life worth living.",
-    totalCopies: 4,
-    availableCopies: 0,
-    addedBy: "Alex Morgan",
-    addedByEmail: "alex@example.com",
-    addedAt: "2026-09-26T18:00:00.000Z",
-  },
-  {
-    _id: "bk-charlottes-web",
-    title: "Charlotte's Web",
-    author: "E. B. White",
-    category: "Kids",
-    image: cover("9780064400558"),
-    description:
-      "Wilbur the pig is saved from an early end by Charlotte, a wise grey spider who weaves words into her web. E. B. White's timeless tale of friendship on a Maine farm has charmed generations of young readers.",
-    totalCopies: 5,
-    availableCopies: 5,
-    addedBy: "Alex Morgan",
-    addedByEmail: "alex@example.com",
-    addedAt: "2026-09-20T13:10:00.000Z",
-  },
-  {
-    _id: "bk-sapiens",
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    category: "History",
-    image: cover("9780062316097"),
-    description:
-      "How did an insignificant ape come to rule the planet? Yuval Noah Harari surveys 70,000 years of human history — the cognitive, agricultural and scientific revolutions — to ask what made Homo sapiens the only species capable of cooperating in millions.",
-    totalCopies: 3,
-    availableCopies: 3,
-    addedBy: "Priya Sharma",
-    addedByEmail: "priya@example.com",
-    addedAt: "2026-09-14T15:30:00.000Z",
-  },
-  {
-    _id: "bk-crawdads",
-    title: "Where the Crawdads Sing",
-    author: "Delia Owens",
-    category: "Fiction",
-    image: cover("9780735219090"),
-    description:
-      "Abandoned by her family, Kya Clark raises herself in the marshes of North Carolina, earning the town's suspicion — until a death draws her into its headlines. Part coming-of-age, part courtroom drama, part ode to the natural world.",
-    totalCopies: 3,
-    availableCopies: 2,
-    addedBy: "Maya Okafor",
-    addedByEmail: "maya@example.com",
-    addedAt: "2026-09-08T09:55:00.000Z",
-  },
-  {
-    _id: "bk-book-thief",
-    title: "The Book Thief",
-    author: "Markus Zusak",
-    category: "Fiction",
-    image: cover("9780375842207"),
-    description:
-      "Narrated by Death, this is the story of Liesel Meminger, a foster girl stealing books in Nazi Germany while her family hides a Jewish man in the basement. A haunting, ultimately hopeful tale about the power of words.",
-    totalCopies: 2,
-    availableCopies: 2,
-    addedBy: "Maya Okafor",
-    addedByEmail: "maya@example.com",
-    addedAt: "2026-09-02T17:25:00.000Z",
-  },
-  {
-    _id: "bk-brief-history-time",
-    title: "A Brief History of Time",
-    author: "Stephen Hawking",
-    category: "Science",
-    image: cover("9780553380163"),
-    description:
-      "Stephen Hawking guides curious readers through space and time, black holes and the Big Bang — asking where the universe came from, where it is going, and whether it had a beginning. Few science books have explained so much so clearly.",
-    totalCopies: 2,
-    availableCopies: 1,
-    addedBy: "Daniel Chen",
-    addedByEmail: "daniel@example.com",
-    addedAt: "2026-08-27T12:00:00.000Z",
-  },
-  {
-    _id: "bk-anne-frank",
-    title: "The Diary of a Young Girl",
-    author: "Anne Frank",
-    category: "History",
-    image: cover("9780553296983"),
-    description:
-      "For two years, Anne Frank and her family hid in a secret annex in Amsterdam while the Nazis occupied the Netherlands. Her diary — funny, perceptive and heartbreakingly hopeful — remains one of the most important documents of the twentieth century.",
-    totalCopies: 4,
-    availableCopies: 4,
-    addedBy: "Maya Okafor",
-    addedByEmail: "maya@example.com",
-    addedAt: "2026-08-21T10:35:00.000Z",
-  },
-  {
-    _id: "bk-henrietta-lacks",
-    title: "The Immortal Life of Henrietta Lacks",
-    author: "Rebecca Skloot",
-    category: "Science",
-    image: cover("9781400052189"),
-    description:
-      "Her name was Henrietta Lacks, and her cells — taken without her knowledge in 1951 — became one of the most important tools in medicine. Rebecca Skloot tells the story of the woman behind HeLa cells and the family she left behind.",
-    totalCopies: 3,
-    availableCopies: 2,
-    addedBy: "Daniel Chen",
-    addedByEmail: "daniel@example.com",
-    addedAt: "2026-08-15T14:50:00.000Z",
-  },
-];
-
 export const INITIAL_BORROWS: BorrowRecord[] = [
   {
-    id: "br-1",
+    _id: "br-1",
     bookId: "bk-atomic-habits",
     bookTitle: "Atomic Habits",
     bookImage: cover("9780735211292"),
@@ -226,7 +27,7 @@ export const INITIAL_BORROWS: BorrowRecord[] = [
     status: "borrowed",
   },
   {
-    id: "br-2",
+    _id: "br-2",
     bookId: "bk-guns-germs-steel",
     bookTitle: "Guns, Germs, and Steel",
     bookImage: cover("9780393354324"),
@@ -238,7 +39,7 @@ export const INITIAL_BORROWS: BorrowRecord[] = [
     status: "borrowed",
   },
   {
-    id: "br-3",
+    _id: "br-3",
     bookId: "bk-cosmos",
     bookTitle: "Cosmos",
     bookImage: cover("9780345539434"),
@@ -250,7 +51,7 @@ export const INITIAL_BORROWS: BorrowRecord[] = [
     status: "borrowed",
   },
   {
-    id: "br-4",
+    _id: "br-4",
     bookId: "bk-sapiens",
     bookTitle: "Sapiens",
     bookImage: cover("9780062316097"),
@@ -262,7 +63,7 @@ export const INITIAL_BORROWS: BorrowRecord[] = [
     status: "returned",
   },
   {
-    id: "br-5",
+    _id: "br-5",
     bookId: "bk-book-thief",
     bookTitle: "The Book Thief",
     bookImage: cover("9780375842207"),
@@ -274,7 +75,7 @@ export const INITIAL_BORROWS: BorrowRecord[] = [
     status: "returned",
   },
   {
-    id: "br-6",
+    _id: "br-6",
     bookId: "bk-alchemist",
     bookTitle: "The Alchemist",
     bookImage: cover("9780062315007"),

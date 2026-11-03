@@ -1,16 +1,18 @@
 "use client";
 
+import { BookCard } from "@/components/books/book-card";
 import { BorrowDialog } from "@/components/books/borrow-dialog";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { BookCover, UserAvatar } from "@/components/shared/book-cover";
 import { CategoryBadge } from "@/components/shared/category-badge";
 import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
-import { demoUser, MOCK_CONTRIBUTORS } from "@/data";
+import { MOCK_CONTRIBUTORS } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
+import { useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
-import { Book, BorrowRecord, User } from "@/types";
+import { Book, BorrowRecord } from "@/types";
 import {
   ArrowLeft,
   BookOpen,
@@ -26,12 +28,20 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BookDetailsSkeleton } from "./book-details-skeleton";
 
-export default function BookDetailsView({ book }: { book: Book }) {
+export default function BookDetailsView({
+  book,
+  books,
+  borrows,
+}: {
+  book: Book | null;
+  books: Book[];
+  borrows: BorrowRecord[];
+}) {
   const router = useRouter();
-  const { borrows, user }: { borrows: BorrowRecord[]; user: User } = {
-    borrows: [],
-    user: demoUser,
-  };
+
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const loading = useSimulatedLoading(600);
   const [borrowOpen, setBorrowOpen] = useState(false);
 
@@ -41,21 +51,21 @@ export default function BookDetailsView({ book }: { book: Book }) {
     () =>
       !!book &&
       !!user &&
-      borrows.some(
+      (borrows ?? []).some(
         (b) =>
           b.bookId === book._id &&
-          b.userEmail.toLowerCase() === user.email.toLowerCase() &&
+          b.userEmail?.toLowerCase() === user.email.toLowerCase() &&
           b.status === "borrowed",
       ),
     [book, borrows, user],
   );
 
-  // const related = useMemo(() => {
-  //   if (!book) return [];
-  //   return books
-  //     .filter((b) => b.category === book.category && b._id !== book._id)
-  //     .slice(0, 4);
-  // }, [books, book]);
+  const related = useMemo(() => {
+    if (!book) return [];
+    return (books ?? [])
+      .filter((b) => b.category === book.category && b._id !== book._id)
+      .slice(0, 4);
+  }, [books, book]);
 
   if (loading) return <BookDetailsSkeleton />;
 
@@ -279,7 +289,7 @@ export default function BookDetailsView({ book }: { book: Book }) {
       </div>
 
       {/* Related */}
-      {/* {related.length > 0 && (
+      {related.length > 0 && (
         <section
           aria-labelledby="related-heading"
           className="mt-16 border-t pt-12 sm:mt-20"
@@ -301,7 +311,7 @@ export default function BookDetailsView({ book }: { book: Book }) {
             ))}
           </div>
         </section>
-      )} */}
+      )}
 
       <BorrowDialog
         book={book}

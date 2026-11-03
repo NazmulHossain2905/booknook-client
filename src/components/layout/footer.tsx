@@ -163,8 +163,7 @@ export function Footer() {
               aria-hidden
               className="bg-gold-soft inline-block size-1.5 rounded-full"
             />
-            A front-end demo — brewed with Next.js, Tailwind & a love of
-            libraries.
+            BookNook — brewed with Next.js, Tailwind & a love of libraries.
           </p>
         </Container>
       </div>
