@@ -28,6 +28,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/lib/auth-client";
 import { UserAvatar } from "../shared/book-cover";
 
@@ -77,7 +78,7 @@ export function Navbar() {
 
   const user = session?.user;
 
-  const links = [...PUBLIC_LINKS, ...(user ? PRIVATE_LINKS : [])];
+  const links = [...PUBLIC_LINKS, ...(!isPending && user ? PRIVATE_LINKS : [])];
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
@@ -106,13 +107,31 @@ export function Navbar() {
               active={isActive(link.href)}
             />
           ))}
+          {/* Session skeletons — placeholders for the private links while
+              the session is still loading, so the layout doesn't jump */}
+          {isPending &&
+            PRIVATE_LINKS.map((link) => (
+              <Skeleton
+                key={link.href}
+                aria-hidden
+                className="mx-0.5 h-9 w-24 rounded-full"
+              />
+            ))}
         </div>
 
         {/* Right cluster */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
 
-          {user ? (
+          {isPending ? (
+            <>
+              <Skeleton
+                aria-hidden
+                className="hidden h-9 w-28 rounded-full sm:block"
+              />
+              <Skeleton aria-hidden className="size-8 rounded-full" />
+            </>
+          ) : user ? (
             <>
               <Button
                 asChild
@@ -192,10 +211,18 @@ export function Navbar() {
               </nav>
 
               <div className="border-border/70 space-y-3 border-t p-5">
-                {user ? (
+                {isPending ? (
+                  <div aria-hidden className="flex items-center gap-3">
+                    <Skeleton className="size-9 shrink-0 rounded-full" />
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <Skeleton className="h-4 w-28 max-w-full" />
+                      <Skeleton className="h-3 w-40 max-w-full" />
+                    </div>
+                  </div>
+                ) : user ? (
                   <>
                     <div className="flex items-center gap-3">
-                      <UserAvatar src={user?.image!} name={user?.name} />
+                      <UserAvatar src={user.image} name={user.name} />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">
                           {user?.name}

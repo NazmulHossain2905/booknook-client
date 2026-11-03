@@ -63,7 +63,8 @@ export function UserAvatar({
   name,
   className,
 }: {
-  src?: string;
+  /* Google/social avatars may legitimately be null */
+  src?: string | null;
   name: string;
   className?: string;
 }) {
