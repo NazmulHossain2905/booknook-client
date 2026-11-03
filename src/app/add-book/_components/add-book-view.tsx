@@ -38,7 +38,6 @@ function AddBookContent() {
         image: values.image,
         description: values.description,
         totalCopies: values.totalCopies,
-        availableCopies: values.totalCopies,
         addedBy: user?.name,
         addedByEmail: user?.email,
       };
