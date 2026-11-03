@@ -14,7 +14,7 @@ export function BookCard({
   priority?: boolean;
 }) {
   return (
-    <article className="group bg-card hover:shadow-primary/10 flex h-full flex-col overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <article className="group bg-card hover:shadow-primary/10 flex h-full w-full flex-col overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       <Link
         href={`/books/${book._id}`}
         className="focus-visible:ring-ring/50 relative block overflow-hidden rounded-lg outline-none focus-visible:ring-[3px]"
@@ -55,7 +55,7 @@ export function BookCard({
         <Button
           asChild
           variant="outline"
-          className="group-hover:border-primary/40 group-hover:bg-primary group-hover:text-primary-foreground mt-4 w-full"
+          className="group-hover:border-primary/40 group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-primary mt-4 w-full"
         >
           <Link href={`/books/${book._id}`}>
             View Details
