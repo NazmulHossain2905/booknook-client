@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants";
 import { auth } from "@/lib/auth";
+import { getServerToken } from "@/lib/getServerToken";
 import { Book, BorrowRecord } from "@/types";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -36,15 +37,21 @@ export default async function BookDetailsPage({ params }: BookPageProps) {
 
   const user = session?.user;
 
+  const token = await getServerToken();
+
   const bookRes = await fetch(`${BASE_URL}/books/${id}`, {
     cache: "no-store",
+    headers: { authorization: token },
   });
 
   const book = bookRes.ok
     ? (((await bookRes.json().catch(() => null))?.data as Book | null) ?? null)
     : null;
 
-  const booksRes = await fetch(`${BASE_URL}/books`, { cache: "no-store" });
+  const booksRes = await fetch(`${BASE_URL}/books`, {
+    cache: "no-store",
+    headers: { authorization: token },
+  });
   const books = booksRes.ok
     ? (((await booksRes.json().catch(() => null))?.data as Book[]) ?? [])
     : [];
@@ -52,6 +59,7 @@ export default async function BookDetailsPage({ params }: BookPageProps) {
   const borrowsRes = user
     ? await fetch(`${BASE_URL}/borrows/${encodeURIComponent(user.email)}`, {
         cache: "no-store",
+        headers: { authorization: token },
       })
     : null;
   const borrows: BorrowRecord[] =

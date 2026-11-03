@@ -18,7 +18,7 @@ export default function MobileCards({
 }) {
   return (
     <div className="grid gap-4 md:hidden">
-      {books.map((book) => (
+      {books?.map((book) => (
         <article
           key={book._id}
           className="bg-card rounded-2xl border p-4 shadow-sm"

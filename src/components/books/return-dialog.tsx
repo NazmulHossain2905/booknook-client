@@ -10,9 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { BASE_URL } from "@/constants";
 import { formatDate } from "@/lib/format";
+import { getClientToken } from "@/lib/getClientToken";
 import { BorrowRecord } from "@/types";
 import { Loader2, RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -29,15 +32,28 @@ export function ReturnDialog({
   onOpenChange,
 }: ReturnDialogProps) {
   const [returning, setReturning] = useState(false);
+  const router = useRouter();
 
   const onReturn = async () => {
     if (!record) return;
     setReturning(true);
     try {
-      // await returnBook(record.id);
-      // toast.success("Returned — thank you!", {
-      //   description: `“${record.bookTitle}” is back on the shelf for the next reader.`,
-      // });
+      const token = await getClientToken();
+      const res = await fetch(`${BASE_URL}/borrows/${record._id}`, {
+        method: "PATCH",
+        headers: { authorization: token },
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success("Returned — thank you!", {
+          description: `“${record.bookTitle}” is back on the shelf for the next reader.`,
+        });
+      }
+
+      router.refresh();
+
       onOpenChange(false);
     } catch {
       toast.error("Could not return the book", {
@@ -88,7 +104,7 @@ export function ReturnDialog({
           </div>
         )}
 
-        <DialogFooter className="mt-2 gap-2 sm:gap-0">
+        <DialogFooter className="mt-2 gap-2">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}

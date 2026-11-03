@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { BASE_URL } from "@/constants";
 import { useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
+import { getClientToken } from "@/lib/getClientToken";
 import { Book } from "@/types";
 import { CalendarDays, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -56,9 +57,11 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
     };
 
     try {
+      const token = await getClientToken();
+
       const res = await fetch(`${BASE_URL}/borrows`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", authorization: token },
         body: JSON.stringify(newBorrow),
       });
 
@@ -148,7 +151,7 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
           </div>
         </div>
 
-        <DialogFooter className="mt-2 gap-2 sm:gap-0">
+        <DialogFooter className="mt-2 gap-2">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}

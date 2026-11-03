@@ -16,7 +16,7 @@ export function BorrowCard({
   return (
     <article className="bg-card rounded-2xl border p-4 shadow-sm">
       <div className="flex gap-4">
-        <div className="w-16 shrink-0 overflow-hidden rounded-md shadow-sm">
+        <div className="w-16 shrink-0 overflow-hidden rounded-md">
           <BookCover
             src={record.bookImage}
             alt={`Cover of “${record.bookTitle}”`}
@@ -30,7 +30,7 @@ export function BorrowCard({
           <p className="text-muted-foreground mt-0.5 text-sm">
             by {record.bookAuthor}
           </p>
-          <div className="text-muted-foreground mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+          <div className="text-muted-foreground mt-2.5 grid gap-x-4 gap-y-1.5 text-xs">
             <p>
               <span className="text-foreground font-medium">Borrowed:</span>{" "}
               {formatDate(record.borrowDate)}

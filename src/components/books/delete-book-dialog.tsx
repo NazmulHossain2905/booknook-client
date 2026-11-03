@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { BASE_URL } from "@/constants";
+import { getClientToken } from "@/lib/getClientToken";
 import { Book } from "@/types";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -35,8 +36,10 @@ export function DeleteBookDialog({
     if (!book) return;
     setDeleting(true);
     try {
+      const token = await getClientToken();
       const res = await fetch(`${BASE_URL}/books/${book._id}`, {
         method: "DELETE",
+        headers: { authorization: token },
       });
 
       const result = await res.json();

@@ -1,4 +1,9 @@
+import { BASE_URL } from "@/constants";
+import { auth } from "@/lib/auth";
+import { getServerToken } from "@/lib/getServerToken";
+import { Book, BorrowRecord } from "@/types";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import ProfileView from "./_components/profile-view";
 
 export const metadata: Metadata = {
@@ -6,6 +11,33 @@ export const metadata: Metadata = {
   description: "Your BookNook reader's card — profile and library activity.",
 };
 
-export default function ProfilePage() {
-  return <ProfileView />;
+export default async function ProfilePage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+  const token = await getServerToken();
+
+  const booksRes = await fetch(`${BASE_URL}/my-books/${user?.email}`, {
+    cache: "no-store",
+    headers: { authorization: token },
+  });
+  const books = booksRes.ok
+    ? (((await booksRes.json().catch(() => null))?.data as Book[]) ?? [])
+    : [];
+
+  const borrowsRes = user
+    ? await fetch(`${BASE_URL}/borrows/${encodeURIComponent(user.email)}`, {
+        cache: "no-store",
+        headers: { authorization: token },
+      })
+    : null;
+  const borrows: BorrowRecord[] =
+    borrowsRes && borrowsRes.ok
+      ? (((await borrowsRes.json().catch(() => null))
+          ?.data as BorrowRecord[]) ?? [])
+      : [];
+
+  return <ProfileView books={books} borrows={borrows} />;
 }

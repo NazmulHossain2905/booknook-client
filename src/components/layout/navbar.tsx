@@ -14,7 +14,7 @@ import {
   PlusCircle,
   ScrollText,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { ThemeToggle } from "./theme-toggle";
@@ -29,7 +29,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSession } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
 import { UserAvatar } from "../shared/book-cover";
 
 const PUBLIC_LINKS = [
@@ -75,8 +76,28 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   const { data: session, isPending } = useSession();
-
   const user = session?.user;
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      const { data } = await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/login");
+            // router.refresh();
+          },
+        },
+      });
+
+      if (data?.success) {
+        toast.success("Sign-out successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const links = [...PUBLIC_LINKS, ...(!isPending && user ? PRIVATE_LINKS : [])];
   const isActive = (href: string) =>
@@ -237,6 +258,7 @@ export function Navbar() {
                       className="w-full"
                       onClick={() => {
                         setOpen(false);
+                        handleSignOut();
                       }}
                     >
                       <LogOut aria-hidden className="size-4" />

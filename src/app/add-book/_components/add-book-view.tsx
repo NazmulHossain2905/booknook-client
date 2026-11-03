@@ -7,6 +7,7 @@ import { Container } from "@/components/shared/container";
 import { BASE_URL } from "@/constants";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSession } from "@/lib/auth-client";
+import { getClientToken } from "@/lib/getClientToken";
 import type { BookFormValues } from "@/schemas/book.schema";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -16,7 +17,6 @@ function AddBookContent() {
   usePageTitle("Add Book");
 
   const { data: session, isPending } = useSession();
-
   const user = session?.user;
 
   const router = useRouter();
@@ -30,6 +30,7 @@ function AddBookContent() {
 
   const onSubmit = async (values: BookFormValues) => {
     setSubmitting(true);
+
     try {
       const newBook = {
         title: values.title,
@@ -42,9 +43,14 @@ function AddBookContent() {
         addedByEmail: user?.email,
       };
 
+      const token = await getClientToken();
+
       const res = await fetch(`${BASE_URL}/books`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
         body: JSON.stringify(newBook),
       });
 

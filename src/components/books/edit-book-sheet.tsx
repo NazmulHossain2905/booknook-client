@@ -9,6 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { BASE_URL } from "@/constants";
+import { getClientToken } from "@/lib/getClientToken";
 import { BookFormValues } from "@/schemas/book.schema";
 import { Book } from "@/types";
 import { useRouter } from "next/navigation";
@@ -44,9 +45,11 @@ export function EditBookSheet({
         totalCopies: values.totalCopies,
       };
 
+      const token = await getClientToken();
+
       const res = await fetch(`${BASE_URL}/books/${book._id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", authorization: token },
         body: JSON.stringify(updatedBook),
       });
 

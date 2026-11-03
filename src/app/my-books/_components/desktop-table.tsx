@@ -36,7 +36,7 @@ export function DesktopTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {books.map((book) => (
+          {books?.map((book) => (
             <TableRow key={book._id} className="group">
               <TableCell className="pl-6">
                 <div className="flex items-center gap-4 py-2">

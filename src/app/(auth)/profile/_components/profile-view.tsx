@@ -5,10 +5,10 @@ import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { demoUser } from "@/data";
 import { usePageTitle } from "@/hooks/use-page-title";
+import { updateUser, useSession } from "@/lib/auth-client";
 import { formatDate } from "@/lib/format";
-import { Book, BorrowRecord, User } from "@/types";
+import { Book, BorrowRecord } from "@/types";
 import {
   BookMarked,
   BookOpen,
@@ -22,17 +22,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-function ProfileContent() {
+function ProfileContent({
+  books,
+  borrows,
+}: {
+  books: Book[];
+  borrows: BorrowRecord[];
+}) {
   usePageTitle("My Profile");
-  const {
-    user,
-    books,
-    borrows,
-  }: { user: User; books: Book[]; borrows: BorrowRecord[] } = {
-    user: demoUser,
-    books: [],
-    borrows: [],
-  };
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
 
   const [name, setName] = useState(user?.name ?? "");
   const [photoUrl, setPhotoUrl] = useState(user?.image ?? "");
@@ -47,13 +46,7 @@ function ProfileContent() {
 
   if (!user) return null;
 
-  const myBooks = books.filter(
-    (b) => b.addedByEmail.toLowerCase() === user.email.toLowerCase(),
-  );
-  const myBorrows = borrows.filter(
-    (b) => b.userEmail.toLowerCase() === user.email.toLowerCase(),
-  );
-  const activeBorrows = myBorrows.filter((b) => b.status === "borrowed");
+  const activeBorrows = borrows.filter((b) => b.status === "borrowed");
 
   const dirty = name.trim() !== user.name || photoUrl.trim() !== user.image;
 
@@ -66,11 +59,22 @@ function ProfileContent() {
     }
     setSaving(true);
     await new Promise((r) => setTimeout(r, 600));
-    // updateProfile({ name, avatar: photoUrl });
+
+    const { data, error } = await updateUser({ name, image: photoUrl });
+
+    if (data?.status) {
+      toast.success("Profile updated", {
+        description: "Your reader's card has been reprinted.",
+      });
+    }
+
+    if (error?.message) {
+      toast.success("Couldn't update", {
+        description: error.message ?? "Failed to update",
+      });
+    }
+
     setSaving(false);
-    toast.success("Profile updated", {
-      description: "Your reader's card has been reprinted.",
-    });
   };
 
   return (
@@ -213,7 +217,7 @@ function ProfileContent() {
                   Books added
                 </dt>
                 <dd className="font-display text-3xl font-semibold">
-                  {myBooks.length}
+                  {books?.length}
                 </dd>
               </div>
               <div className="flex items-center justify-between border-b border-white/15 pb-5">
@@ -231,7 +235,7 @@ function ProfileContent() {
                   Total borrows
                 </dt>
                 <dd className="font-display text-3xl font-semibold">
-                  {myBorrows.length}
+                  {borrows?.length}
                 </dd>
               </div>
             </dl>
@@ -247,6 +251,12 @@ function ProfileContent() {
   );
 }
 
-export default function ProfileView() {
-  return <ProfileContent />;
+export default function ProfileView({
+  books,
+  borrows,
+}: {
+  books: Book[];
+  borrows: BorrowRecord[];
+}) {
+  return <ProfileContent books={books} borrows={borrows} />;
 }

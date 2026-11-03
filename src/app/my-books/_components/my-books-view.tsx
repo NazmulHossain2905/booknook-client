@@ -27,7 +27,7 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return myBooks.filter((book) => {
+    return myBooks?.filter((book) => {
       const matchesCategory = category === "All" || book.category === category;
       const matchesQuery =
         !q ||
@@ -54,10 +54,10 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
         </div>
         <div className="bg-card rounded-2xl border px-5 py-4 text-center shadow-sm">
           <p className="font-display text-primary text-3xl leading-none font-semibold">
-            {myBooks.length}
+            {myBooks?.length}
           </p>
           <p className="text-muted-foreground mt-1.5 text-xs font-medium tracking-wide uppercase">
-            {myBooks.length === 1 ? "book added" : "books added"}
+            {myBooks?.length === 1 ? "book added" : "books added"}
           </p>
         </div>
       </header>
@@ -106,7 +106,7 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
       <div className="mt-6">
         {loading ? (
           <MyBooksSkeleton />
-        ) : visible.length === 0 ? (
+        ) : visible?.length === 0 ? (
           <EmptyState
             icon={BookMarked}
             title={
