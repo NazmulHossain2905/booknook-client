@@ -6,19 +6,18 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
 
 import { usePageTitle } from "@/hooks/use-page-title";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { cn } from "@/lib/utils";
 import { Book, CATEGORIES, Category } from "@/types";
-import { BookMarked, Search } from "lucide-react";
+import {
+  BookMarked,
+  Search,
+} from "lucide-react";
 import { useMemo, useState } from "react";
-import { MyBooksSkeleton } from "./book-skeleton";
 import { DesktopTable } from "./desktop-table";
 import MobileCards from "./mobile-cards";
 
 export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
   usePageTitle("My Books");
-
-  const loading = useSimulatedLoading(600);
 
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | "All">("All");
@@ -27,7 +26,7 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return myBooks?.filter((book) => {
+    return (myBooks ?? []).filter((book) => {
       const matchesCategory = category === "All" || book.category === category;
       const matchesQuery =
         !q ||
@@ -48,16 +47,16 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
             My Books
           </h1>
           <p className="text-muted-foreground mt-4 text-base leading-relaxed">
-            The titles you've carried into the library. Tidy them up, restock
+            The titles you&apos;ve carried into the library. Tidy them up, restock
             the copies, or take one home for good.
           </p>
         </div>
         <div className="bg-card rounded-2xl border px-5 py-4 text-center shadow-sm">
           <p className="font-display text-primary text-3xl leading-none font-semibold">
-            {myBooks?.length}
+            {myBooks.length}
           </p>
           <p className="text-muted-foreground mt-1.5 text-xs font-medium tracking-wide uppercase">
-            {myBooks?.length === 1 ? "book added" : "books added"}
+            {myBooks.length === 1 ? "book added" : "books added"}
           </p>
         </div>
       </header>
@@ -104,9 +103,7 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
 
       {/* Content */}
       <div className="mt-6">
-        {loading ? (
-          <MyBooksSkeleton />
-        ) : visible?.length === 0 ? (
+        {visible.length === 0 ? (
           <EmptyState
             icon={BookMarked}
             title={

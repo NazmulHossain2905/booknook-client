@@ -11,13 +11,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePageTitle } from "@/hooks/use-page-title";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { BorrowRecord } from "@/types";
 import { BookOpen, BookPlus, ScrollText } from "lucide-react";
 import { useState } from "react";
 import { BorrowCard } from "./borrow-card";
 import { BorrowRow } from "./borrow-row";
-import { MyBorrowsSkeleton } from "./my-borrow-skeleton";
 
 export default function MyBorrowsView({
   borrows,
@@ -26,7 +24,6 @@ export default function MyBorrowsView({
 }) {
   usePageTitle("My Borrows");
 
-  const loading = useSimulatedLoading(600);
   const [returning, setReturning] = useState<BorrowRecord | null>(null);
 
   const active = borrows.filter((b) => b.status === "borrowed");
@@ -40,94 +37,90 @@ export default function MyBorrowsView({
           My Borrows
         </h1>
         <p className="text-muted-foreground mt-4 text-base leading-relaxed">
-          Everything you've checked out of the library — what you're reading
-          now, and what you've already passed along.
+          Everything you&apos;ve checked out of the library — what you&apos;re reading
+          now, and what you&apos;ve already passed along.
         </p>
       </header>
 
-      {loading ? (
-        <div className="mt-8">
-          <MyBorrowsSkeleton />
-        </div>
-      ) : borrows.length === 0 ? (
-        <div className="mt-8">
+      <div className="mt-8">
+        {borrows.length === 0 ? (
           <EmptyState
             icon={ScrollText}
             title="Your reading nook is quiet"
             description="You haven't borrowed anything yet. Wander the shelves and pick your first fortnight of reading."
             action={{ label: "Browse the shelves", href: "/books" }}
           />
-        </div>
-      ) : (
-        <>
-          {/* Summary cards */}
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="bg-card flex items-center gap-4 rounded-2xl border p-5 shadow-sm">
-              <span className="bg-primary/10 text-primary flex size-12 shrink-0 items-center justify-center rounded-xl">
-                <BookOpen aria-hidden className="size-5.5" />
-              </span>
-              <div>
-                <p className="font-display text-3xl leading-none font-semibold">
-                  {active.length}
-                </p>
-                <p className="text-muted-foreground mt-1.5 text-sm">
-                  {active.length === 1
-                    ? "book currently borrowed"
-                    : "books currently borrowed"}
-                </p>
+        ) : (
+          <>
+            {/* Summary cards */}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="bg-card flex items-center gap-4 rounded-2xl border p-5 shadow-sm">
+                <span className="bg-primary/10 text-primary flex size-12 shrink-0 items-center justify-center rounded-xl">
+                  <BookOpen aria-hidden className="size-5.5" />
+                </span>
+                <div>
+                  <p className="font-display text-3xl leading-none font-semibold">
+                    {active.length}
+                  </p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">
+                    {active.length === 1
+                      ? "book currently borrowed"
+                      : "books currently borrowed"}
+                  </p>
+                </div>
+              </div>
+              <div className="bg-card flex items-center gap-4 rounded-2xl border p-5 shadow-sm">
+                <span className="bg-secondary text-muted-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
+                  <BookPlus aria-hidden className="size-5.5" />
+                </span>
+                <div>
+                  <p className="font-display text-3xl leading-none font-semibold">
+                    {returned.length}
+                  </p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">
+                    {returned.length === 1 ? "book returned" : "books returned"}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="bg-card flex items-center gap-4 rounded-2xl border p-5 shadow-sm">
-              <span className="bg-secondary text-muted-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
-                <BookPlus aria-hidden className="size-5.5" />
-              </span>
-              <div>
-                <p className="font-display text-3xl leading-none font-semibold">
-                  {returned.length}
-                </p>
-                <p className="text-muted-foreground mt-1.5 text-sm">
-                  {returned.length === 1 ? "book returned" : "books returned"}
-                </p>
-              </div>
+
+            {/* Table (desktop) */}
+            <div className="bg-card mt-6 hidden overflow-hidden rounded-2xl border shadow-sm md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+                    <TableHead className="w-[36%] pl-6">Book</TableHead>
+                    <TableHead>Borrow Date</TableHead>
+                    <TableHead>Return Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="pr-6 text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {borrows.map((record) => (
+                    <BorrowRow
+                      key={record._id}
+                      record={record}
+                      onReturn={setReturning}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          </div>
 
-          {/* Table (desktop) */}
-          <div className="bg-card mt-6 hidden overflow-hidden rounded-2xl border shadow-sm md:block">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                  <TableHead className="w-[36%] pl-6">Book</TableHead>
-                  <TableHead>Borrow Date</TableHead>
-                  <TableHead>Return Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="pr-6 text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {borrows.map((record) => (
-                  <BorrowRow
-                    key={record._id}
-                    record={record}
-                    onReturn={setReturning}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Cards (mobile) */}
-          <div className="mt-6 grid gap-4 md:hidden">
-            {borrows.map((record) => (
-              <BorrowCard
-                key={record._id}
-                record={record}
-                onReturn={setReturning}
-              />
-            ))}
-          </div>
-        </>
-      )}
+            {/* Cards (mobile) */}
+            <div className="mt-6 grid gap-4 md:hidden">
+              {borrows.map((record) => (
+                <BorrowCard
+                  key={record._id}
+                  record={record}
+                  onReturn={setReturning}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       <ReturnDialog
         record={returning}
