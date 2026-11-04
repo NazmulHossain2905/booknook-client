@@ -7,6 +7,15 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss)
 ![Better Auth](https://img.shields.io/badge/Better_Auth-1.7-F97316)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?logo=vercel)
+
+---
+
+## 🌐 Live Site
+
+**https://booknook-online.vercel.app/**
+
+> Try it out — browse the shelves, sign up, add a book, and take one out for a 14-day loan.
 
 ---
 
@@ -94,7 +103,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/booknook-client.git
+git clone https://github.com/NazmulHossain2905/booknook-client.git
 cd booknook-client
 ```
 
@@ -219,12 +228,12 @@ src/
 │
 ├── components/
 │   ├── books/                  # Feature: book-card, book-form, borrow/return/delete
-│   │                            # dialogs, edit sheet, live preview
+│   │                           # dialogs, edit sheet, live preview
 │   ├── home/                   # Feature: hero slider, categories, new arrivals, CTA
 │   ├── layout/                 # App shell: navbar, footer, logo, theme toggle, user menu
 │   ├── providers/              # Theme + app-level providers
 │   ├── shared/                 # Cross-feature: container, empty state, skeletons,
-│   │                            # badges, book cover, section heading, reveal
+│   │                           # badges, book cover, section heading, reveal
 │   └── ui/                     # shadcn/ui primitives (button, dialog, form, table…)
 │
 ├── constants/                  # BASE_URL and shared constants
@@ -257,7 +266,7 @@ src/
 
 ## 🎨 Design System
 
-- **Fonts** — Geist (UI), Inter (body fallback), Fraunces (`font-display` headings)
+- **Fonts** — Geist (UI), Inter (body fallback), Frances (`font-display` headings)
 - **Theme tokens** — Tailwind CSS 4 design tokens defined in `globals.css` (`--primary`, `--muted`, `--card`, etc.)
 - **Dark mode** — class-based via `next-themes`, toggled from the navbar, persisted per user
 - **Spacing/layout** — `Container` component with `wide` / default sizes for consistent page rhythm
