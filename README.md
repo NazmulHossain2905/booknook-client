@@ -62,31 +62,33 @@
 - Fully **responsive** from mobile to widescreen
 - **Skeletons** on every data-driven page for smooth loading states
 - Contextual **toast notifications** (Sonner) and accessible **empty states**
+- Graceful **error recovery** — route-level error boundaries, a last-resort global fallback, and **"try again" states** when a fetch fails (a failed load never masquerades as an empty shelf)
 - Custom typography system — Geist, Inter, and Frances display font
 
 ### 🔒 Route Protection
 
 - **Next.js proxy (middleware)** guards private routes (`/add-book`, `/my-books`, `/my-borrows`, `/profile`, `/books/[id]`) and redirects logged-in users away from `/login` and `/register`
+- Unauthenticated visits carry the intended destination to `/login?redirect=…` (sanitized to same-origin paths) and return the member there after sign-in
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                                                                                                    |
-| ---------- | ------------------------------------------------------------------------------------------------------------- |
-| Framework  | [Next.js 16](https://nextjs.org) (App Router, Turbopack)                                                      |
-| Language   | [TypeScript 5](https://www.typescriptlang.org)                                                                |
-| UI Library | [React 19](https://react.dev)                                                                                 |
-| Styling    | [Tailwind CSS 4](https://tailwindcss.com) + `tw-animate-css`                                                  |
-| Components | [shadcn/ui](https://ui.shadcn.com) on [Radix UI](https://www.radix-ui.com)                                    |
-| Auth       | [Better Auth](https://better-auth.com) + MongoDB adapter + JWT plugin                                         |
-| Database   | [MongoDB](https://www.mongodb.com) (auth data)                                                                |
-| Forms      | [React Hook Form](https://react-hook-form.com) + [Zod-style resolvers](https://github.com/hookform/resolvers) |
-| Animation  | [Framer Motion](https://motion.dev), [Swiper](https://swiperjs.com)                                           |
-| Icons      | [Lucide React](https://lucide.dev)                                                                            |
-| Dates      | [date-fns](https://date-fns.org)                                                                              |
-| Toasts     | [Sonner](https://sonner.emilkowal.ski)                                                                        |
-| Theming    | [next-themes](https://github.com/pacocoursey/next-themes)                                                     |
+| Layer      | Technology                                                                                      |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| Framework  | [Next.js 16](https://nextjs.org) (App Router, Turbopack)                                        |
+| Language   | [TypeScript 5](https://www.typescriptlang.org)                                                  |
+| UI Library | [React 19](https://react.dev)                                                                   |
+| Styling    | [Tailwind CSS 4](https://tailwindcss.com) + `tw-animate-css`                                    |
+| Components | [shadcn/ui](https://ui.shadcn.com) on [Radix UI](https://www.radix-ui.com)                      |
+| Auth       | [Better Auth](https://better-auth.com) + MongoDB adapter + JWT plugin                           |
+| Database   | [MongoDB](https://www.mongodb.com) (auth data)                                                  |
+| Forms      | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev) + `@hookform/resolvers` |
+| Animation  | [Framer Motion](https://motion.dev), [Swiper](https://swiperjs.com)                             |
+| Icons      | [Lucide React](https://lucide.dev)                                                              |
+| Dates      | [date-fns](https://date-fns.org)                                                                |
+| Toasts     | [Sonner](https://sonner.emilkowal.ski)                                                          |
+| Theming    | [next-themes](https://github.com/pacocoursey/next-themes)                                       |
 
 ---
 
@@ -200,7 +202,7 @@ The client is a thin, read/write layer over a separate REST backend (`NEXT_PUBLI
 
 ### Data models
 
-- **`Book`** — `_id`, `title`, `author`, `category`, `image`, `description`, `totalCopies`, `availableCopies`, `addedBy`, `addedByEmail`, `addedAt`
+- **`Book`** — `_id`, `title`, `author`, `category`, `image`, `description`, `totalCopies`, `availableCopies`, `addedBy`, `addedByEmail`, `addedByImage`, `addedAt`
 - **`BorrowRecord`** — `_id`, `bookId`, book detail _snapshots_ (title/image/author), `userEmail`, `borrowDate`, `returnDate`, `returnedAt`, `status`
 - **`Category`** — `"Fiction" | "Science" | "History" | "Kids" | "Others"`
 
@@ -224,6 +226,8 @@ src/
 │   ├── layout.tsx              # Root layout: navbar, footer, providers, fonts
 │   ├── page.tsx                # Home page
 │   ├── not-found.tsx           # Custom 404
+│   ├── error.tsx               # Route error boundary with retry
+│   ├── global-error.tsx        # Last-resort error fallback
 │   └── globals.css             # Tailwind + design tokens
 │
 ├── components/
@@ -233,7 +237,7 @@ src/
 │   ├── layout/                 # App shell: navbar, footer, logo, theme toggle, user menu
 │   ├── providers/              # Theme + app-level providers
 │   ├── shared/                 # Cross-feature: container, empty state, skeletons,
-│   │                           # badges, book cover, section heading, reveal
+│   │                           # load-failed state, badges, book cover, section heading, reveal
 │   └── ui/                     # shadcn/ui primitives (button, dialog, form, table…)
 │
 ├── constants/                  # BASE_URL and shared constants
@@ -259,8 +263,8 @@ src/
 1. Users register or sign in via `/register` / `/login` (email/password or Google OAuth).
 2. **Better Auth** validates credentials, persists users/sessions in MongoDB, and issues a **JWT**.
 3. Sessions are cached in an httpOnly cookie for up to **7 days** (`cookieCache` strategy).
-4. `src/proxy.ts` checks the session on every protected navigation and redirects to `/login` when unauthenticated.
-5. Server components call `getServerToken()` (reads the event headers) and client dialogs call `getClientToken()` to attach `Authorization: Bearer …` headers to backend API requests.
+4. `src/proxy.ts` checks the session on every protected navigation and redirects unauthenticated visitors to `/login` with the intended destination, so sign-in can send them straight back.
+5. Server components call `getServerToken()` (reads the event headers) and client dialogs call `getClientToken()` to attach `Authorization: Bearer …` headers to backend API requests. Both return `null` when no usable token exists, so callers skip the request instead of sending `Bearer undefined`.
 
 ---
 
