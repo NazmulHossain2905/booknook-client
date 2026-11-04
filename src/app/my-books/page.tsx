@@ -18,18 +18,22 @@ export default async function MyBooksPage() {
 
   const user = session?.user;
 
-  const token = await getServerToken();
+  const token = user ? await getServerToken() : null;
 
-  const res = user
-    ? await fetch(`${BASE_URL}/my-books/${encodeURIComponent(user.email)}`, {
-        cache: "no-store",
-        headers: { authorization: token },
-      })
-    : null;
+  const res =
+    user && token
+      ? await fetch(`${BASE_URL}/my-books/${encodeURIComponent(user.email)}`, {
+          cache: "no-store",
+          headers: { authorization: token },
+        })
+      : null;
   const myBooks: Book[] =
     res && res.ok
       ? ((await res.json().catch(() => null))?.data as Book[]) ?? []
       : [];
 
-  return <MyBooksView myBooks={myBooks} />;
+  // `res === null` means we never got to make the call (no user/session token).
+  const failed = !res || !res.ok;
+
+  return <MyBooksView myBooks={myBooks} error={failed} />;
 }

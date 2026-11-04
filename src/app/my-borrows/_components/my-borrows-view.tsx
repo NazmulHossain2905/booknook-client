@@ -3,6 +3,7 @@
 import { ReturnDialog } from "@/components/books/return-dialog";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
+import { LoadFailedState } from "@/components/shared/load-failed-state";
 import {
   Table,
   TableBody,
@@ -19,8 +20,10 @@ import { BorrowRow } from "./borrow-row";
 
 export default function MyBorrowsView({
   borrows,
+  error = false,
 }: {
   borrows: BorrowRecord[];
+  error?: boolean;
 }) {
   usePageTitle("My Borrows");
 
@@ -43,7 +46,9 @@ export default function MyBorrowsView({
       </header>
 
       <div className="mt-8">
-        {borrows.length === 0 ? (
+        {error ? (
+          <LoadFailedState title="We couldn't load your borrows" />
+        ) : borrows.length === 0 ? (
           <EmptyState
             icon={ScrollText}
             title="Your reading nook is quiet"

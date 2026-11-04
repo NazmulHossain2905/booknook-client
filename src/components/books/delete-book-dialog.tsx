@@ -37,18 +37,31 @@ export function DeleteBookDialog({
     setDeleting(true);
     try {
       const token = await getClientToken();
+
+      if (!token) {
+        toast.error("Your session has expired", {
+          description: "Please sign in again to remove this book.",
+        });
+        return;
+      }
+
       const res = await fetch(`${BASE_URL}/books/${book._id}`, {
         method: "DELETE",
         headers: { authorization: token },
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
 
-      if (result.success) {
-        toast.success("Book removed", {
-          description: `“${book.title}” has been taken off the shelves.`,
+      if (!res.ok || !result?.success) {
+        toast.error(result?.message ?? "Could not remove the book", {
+          description: "Please try again in a moment.",
         });
+        return;
       }
+
+      toast.success("Book removed", {
+        description: `“${book.title}” has been taken off the shelves.`,
+      });
 
       router.refresh();
       onOpenChange(false);
@@ -73,7 +86,7 @@ export function DeleteBookDialog({
           </DialogTitle>
           <DialogDescription>
             It will disappear from the library for every reader, along with its
-            borrow history. This can't be undone.
+            borrow history. This can&apos;t be undone.
           </DialogDescription>
         </DialogHeader>
 

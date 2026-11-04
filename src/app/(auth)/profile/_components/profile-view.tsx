@@ -2,6 +2,8 @@
 
 import { UserAvatar } from "@/components/shared/book-cover";
 import { Container } from "@/components/shared/container";
+import { EmptyState } from "@/components/shared/empty-state";
+import { LoadFailedState } from "@/components/shared/load-failed-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +19,7 @@ import {
   Mail,
   Save,
   ScrollText,
+  UserRound,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -137,9 +140,11 @@ function ProfileEditorCard({ user }: { user: User }) {
 function ProfileContent({
   books,
   borrows,
+  error = false,
 }: {
   books: Book[];
   borrows: BorrowRecord[];
+  error?: boolean;
 }) {
   usePageTitle("My Profile");
   const { data: session, isPending } = useSession();
@@ -149,7 +154,37 @@ function ProfileContent({
   // session card is still loading, mirror the same skeleton.
   if (isPending) return <ProfileSkeleton />;
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <Container size="default" className="py-10 sm:py-14">
+        <EmptyState
+          icon={UserRound}
+          title="You're signed out"
+          description="Your session has ended. Sign in again to see your reader's card and library activity."
+          action={{ label: "Sign in", href: "/login?redirect=%2Fprofile" }}
+        />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container size="default" className="py-10 sm:py-14">
+        <header className="max-w-2xl">
+          <p className="eyebrow">Your reader&apos;s card</p>
+          <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+            My Profile
+          </h1>
+        </header>
+        <div className="mt-10">
+          <LoadFailedState
+            title="We couldn't load your library activity"
+            description="Your profile is here, but the library didn't return your books and borrows. Nothing has been lost — please try again."
+          />
+        </div>
+      </Container>
+    );
+  }
 
   const activeBorrows = borrows.filter((b) => b.status === "borrowed");
 
@@ -258,9 +293,13 @@ function ProfileContent({
 export default function ProfileView({
   books,
   borrows,
+  error = false,
 }: {
   books: Book[];
   borrows: BorrowRecord[];
+  error?: boolean;
 }) {
-  return <ProfileContent books={books} borrows={borrows} />;
+  return (
+    <ProfileContent books={books} borrows={borrows} error={error} />
+  );
 }

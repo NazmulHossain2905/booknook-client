@@ -10,11 +10,15 @@ export const metadata: Metadata = {
 };
 
 export default async function BooksPage() {
-  const res = await fetch(`${BASE_URL}/books`, { cache: "no-store" });
+  const res = await fetch(`${BASE_URL}/books`, { cache: "no-store" }).catch(
+    () => null,
+  );
 
-  const books: Book[] = res.ok
-    ? ((await res.json().catch(() => null))?.data as Book[]) ?? []
-    : [];
+  const books: Book[] =
+    res && res.ok
+      ? ((await res.json().catch(() => null))?.data as Book[]) ?? []
+      : [];
 
-  return <BooksView books={books} />;
+  // A failed fetch must read as an error, not as "the shelves are empty".
+  return <BooksView books={books} error={!res || !res.ok} />;
 }

@@ -17,27 +17,40 @@ export default async function ProfilePage() {
   });
 
   const user = session?.user;
-  const token = await getServerToken();
+  const token = user ? await getServerToken() : null;
 
-  const booksRes = await fetch(`${BASE_URL}/my-books/${user?.email}`, {
-    cache: "no-store",
-    headers: { authorization: token },
-  });
+  if (!user || !token) {
+    return <ProfileView books={[]} borrows={[]} error={Boolean(user)} />;
+  }
+
+  const booksRes = await fetch(
+    `${BASE_URL}/my-books/${encodeURIComponent(user.email)}`,
+    {
+      cache: "no-store",
+      headers: { authorization: token },
+    },
+  );
   const books = booksRes.ok
     ? (((await booksRes.json().catch(() => null))?.data as Book[]) ?? [])
     : [];
 
-  const borrowsRes = user
-    ? await fetch(`${BASE_URL}/borrows/${encodeURIComponent(user.email)}`, {
-        cache: "no-store",
-        headers: { authorization: token },
-      })
-    : null;
-  const borrows: BorrowRecord[] =
-    borrowsRes && borrowsRes.ok
-      ? (((await borrowsRes.json().catch(() => null))
-          ?.data as BorrowRecord[]) ?? [])
-      : [];
+  const borrowsRes = await fetch(
+    `${BASE_URL}/borrows/${encodeURIComponent(user.email)}`,
+    {
+      cache: "no-store",
+      headers: { authorization: token },
+    },
+  );
+  const borrows: BorrowRecord[] = borrowsRes.ok
+    ? (((await borrowsRes.json().catch(() => null))?.data as BorrowRecord[]) ??
+      [])
+    : [];
 
-  return <ProfileView books={books} borrows={borrows} />;
+  return (
+    <ProfileView
+      books={books}
+      borrows={borrows}
+      error={!booksRes.ok || !borrowsRes.ok}
+    />
+  );
 }

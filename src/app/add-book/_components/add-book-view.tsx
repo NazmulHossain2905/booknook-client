@@ -4,11 +4,14 @@ import { BookForm } from "@/components/books/book-form";
 import { LivePreview } from "@/components/books/live-preview";
 import { ReadOnlyMemberFields } from "@/components/books/read-only-member";
 import { Container } from "@/components/shared/container";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BASE_URL } from "@/constants";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useSession } from "@/lib/auth-client";
 import { getClientToken } from "@/lib/getClientToken";
 import type { BookFormValues } from "@/schemas/book.schema";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -45,6 +48,13 @@ function AddBookContent() {
 
       const token = await getClientToken();
 
+      if (!token) {
+        toast.error("Your session has expired", {
+          description: "Please sign in again to add your book.",
+        });
+        return;
+      }
+
       const res = await fetch(`${BASE_URL}/books`, {
         method: "POST",
         headers: {
@@ -54,17 +64,22 @@ function AddBookContent() {
         body: JSON.stringify(newBook),
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
 
-      if (result.success) {
-        toast.success("Added to the library", {
-          description: `“${result.data.title}” is now on the ${result.data.category} shelf, ready for borrowers.`,
-        });
-      } else {
-        toast.error(result.message, {
+      if (!res.ok || !result?.success) {
+        toast.error(result?.message ?? "Could not add the book", {
           description: "The book wasn't added. Please try again.",
         });
+        return;
       }
+
+      const created = result.data;
+      const shelfTitle = created?.title ?? values.title;
+      const shelfCategory = created?.category ?? values.category;
+
+      toast.success("Added to the library", {
+        description: `“${shelfTitle}” is now on the ${shelfCategory} shelf, ready for borrowers.`,
+      });
 
       router.push("/books");
     } catch {
@@ -92,7 +107,22 @@ function AddBookContent() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         {/* Form */}
         <section aria-label="Add book form">
-          {user && (
+          {isPending ? (
+            <div
+              className="bg-card space-y-5 rounded-2xl border p-6 shadow-sm sm:p-8"
+              aria-busy="true"
+              aria-hidden
+            >
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-11 w-full" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-11 w-full" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-11 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-11 w-36 rounded-full" />
+            </div>
+          ) : user ? (
             <div className="bg-card rounded-2xl border p-6 shadow-sm sm:p-8">
               <BookForm
                 submitLabel="Add Book"
@@ -102,11 +132,24 @@ function AddBookContent() {
                 footer={<ReadOnlyMemberFields user={user} />}
               />
             </div>
+          ) : (
+            <div className="bg-card rounded-2xl border p-6 text-center shadow-sm sm:p-8">
+              <p className="font-display text-xl font-semibold">
+                Sign in to add a book
+              </p>
+              <p className="text-muted-foreground mx-auto mt-2 max-w-sm text-sm leading-relaxed">
+                Your reader&apos;s card is needed before you can contribute a
+                title to the shared shelves.
+              </p>
+              <Button asChild size="lg" className="mt-6 rounded-full">
+                <Link href="/login?redirect=%2Fadd-book">Sign In</Link>
+              </Button>
+            </div>
           )}
         </section>
 
         {/* Live preview */}
-        <LivePreview preview={previewValues!} />
+        <LivePreview preview={previewValues} />
       </div>
     </Container>
   );

@@ -39,6 +39,8 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
   const user = session?.user;
 
   const dueDate = useMemo(() => {
+    if (!open) return "";
+
     const now = new Date();
     return formatDate(
       new Date(now.getTime() + LOAN_DAYS * 24 * 60 * 60 * 1000).toISOString(),
@@ -58,6 +60,13 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
 
     try {
       const token = await getClientToken();
+
+      if (!token) {
+        toast.error("Your session has expired", {
+          description: "Please sign in again to borrow this book.",
+        });
+        return;
+      }
 
       const res = await fetch(`${BASE_URL}/borrows`, {
         method: "POST",
@@ -103,8 +112,8 @@ export function BorrowDialog({ book, open, onOpenChange }: BorrowDialogProps) {
             Confirm your borrow
           </DialogTitle>
           <DialogDescription>
-            You're about to check this title out of the library for {LOAN_DAYS}{" "}
-            days.
+            You&apos;re about to check this title out of the library for{" "}
+            {LOAN_DAYS} days.
           </DialogDescription>
         </DialogHeader>
 

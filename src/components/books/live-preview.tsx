@@ -5,7 +5,7 @@ import { AvailabilityBadge } from "../shared/availability-badge";
 import { BookCover } from "../shared/book-cover";
 import { CategoryBadge } from "../shared/category-badge";
 
-export function LivePreview({ preview }: { preview: BookFormValues }) {
+export function LivePreview({ preview }: { preview?: BookFormValues }) {
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
       <div className="bg-secondary/40 rounded-2xl border border-dashed p-6 sm:p-8">
@@ -42,7 +42,7 @@ export function LivePreview({ preview }: { preview: BookFormValues }) {
               <AvailabilityBadge
                 available={
                   Number(preview?.totalCopies) > 0
-                    ? Number(preview.totalCopies)
+                    ? Number(preview?.totalCopies)
                     : 0
                 }
                 total={Number(preview?.totalCopies) || 0}

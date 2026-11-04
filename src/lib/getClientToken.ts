@@ -1,13 +1,19 @@
 import { authClient } from "./auth-client";
 
-export const getClientToken = async () => {
+/**
+ * `Authorization` header for backend calls from the browser, or `null` when
+ * the token can't be retrieved. Callers must treat `null` as "no session" and
+ * skip the request rather than sending `Bearer undefined`.
+ */
+export const getClientToken = async (): Promise<string | null> => {
   const { data, error } = await authClient.token();
 
   if (error) {
-    console.error(error ?? "getClientToken Error");
+    console.error("getClientToken:", error);
+    return null;
   }
 
   const token = data?.token;
 
-  return `Bearer ${token}`;
+  return token ? `Bearer ${token}` : null;
 };

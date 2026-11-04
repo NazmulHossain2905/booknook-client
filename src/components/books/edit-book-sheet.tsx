@@ -47,23 +47,31 @@ export function EditBookSheet({
 
       const token = await getClientToken();
 
+      if (!token) {
+        toast.error("Your session has expired", {
+          description: "Please sign in again to save your changes.",
+        });
+        return;
+      }
+
       const res = await fetch(`${BASE_URL}/books/${book._id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", authorization: token },
         body: JSON.stringify(updatedBook),
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
 
-      if (result.success) {
-        toast.success("Book updated", {
-          description: `“${values.title}” now reflects your changes on the shelves.`,
+      if (!res.ok || !result?.success) {
+        toast.error(result?.message ?? "Could not save changes", {
+          description: "The book wasn't saved. Please try again.",
         });
-      } else {
-        toast.error(result.message, {
-          description: "The book wasn't added. Please try again.",
-        });
+        return;
       }
+
+      toast.success("Book updated", {
+        description: `“${values.title}” now reflects your changes on the shelves.`,
+      });
 
       router.refresh();
       onOpenChange(false);

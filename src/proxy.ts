@@ -22,9 +22,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Unauthenticated users cannot access protected routes
+  // Unauthenticated users cannot access protected routes.
+  // Carry the intended destination so login can send the member straight back
+  // (the login page sanitises this to same-origin paths only).
   if (!isLoggedIn && isProtectedRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    const destination = `${pathname}${request.nextUrl.search}`;
+    loginUrl.searchParams.set("redirect", destination);
+
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

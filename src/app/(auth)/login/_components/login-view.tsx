@@ -25,11 +25,20 @@ import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+function safeInternalPath(value: string | null): string {
+  if (!value) return "/";
+
+  const isInternalPath =
+    value.startsWith("/") && !value.startsWith("//") && !value.includes("\\");
+
+  return isInternalPath ? value : "/";
+}
+
 function LoginContent() {
   usePageTitle("Login");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
+  const redirect = safeInternalPath(searchParams.get("redirect"));
 
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);

@@ -18,18 +18,22 @@ export default async function MyBorrowsPage() {
   });
 
   const user = session?.user;
-  const token = await getServerToken();
+  const token = user ? await getServerToken() : null;
 
-  const res = user
-    ? await fetch(`${BASE_URL}/borrows/${encodeURIComponent(user.email)}`, {
-        cache: "no-store",
-        headers: { authorization: token },
-      })
-    : null;
+  const res =
+    user && token
+      ? await fetch(`${BASE_URL}/borrows/${encodeURIComponent(user.email)}`, {
+          cache: "no-store",
+          headers: { authorization: token },
+        })
+      : null;
   const borrows: BorrowRecord[] =
     res && res.ok
       ? (((await res.json().catch(() => null))?.data as BorrowRecord[]) ?? [])
       : [];
 
-  return <MyBorrowsView borrows={borrows} />;
+  // `res === null` means we never got to make the call (no user/session token).
+  const failed = !res || !res.ok;
+
+  return <MyBorrowsView borrows={borrows} error={failed} />;
 }

@@ -25,7 +25,7 @@ export function CtaBand() {
           </h2>
           <p className="text-deep-foreground/70 mx-auto mt-4 max-w-xl text-base leading-relaxed">
             Browse the collection, borrow what calls to you, and pass it along
-            when you're done. The library grows every time a neighbor adds a
+            when you&apos;re done. The library grows every time a neighbor adds a
             book — maybe the next one is yours.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

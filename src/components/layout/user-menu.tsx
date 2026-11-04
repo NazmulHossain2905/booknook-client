@@ -17,9 +17,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function UserMenu({ user }: { user: User }) {
-  if (!user) return null;
-
   const router = useRouter();
+
+  if (!user) return null;
 
   const handleSignOut = async () => {
     try {

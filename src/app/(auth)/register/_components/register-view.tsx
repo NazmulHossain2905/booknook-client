@@ -119,6 +119,11 @@ export default function RegisterView() {
         );
         return;
       }
+    } catch (error) {
+      console.error("Google sign-up error:", error);
+      toast.error("Something went wrong", {
+        description: "We couldn't start Google sign-in. Please try again.",
+      });
     } finally {
       setGoogleLoading(false);
     }

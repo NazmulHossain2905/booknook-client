@@ -4,12 +4,10 @@ import { CtaBand } from "@/components/home/cta-band";
 import { HeroSlider } from "@/components/home/hero-slider";
 import { NewArrivals } from "@/components/home/new-arrivals";
 import { BASE_URL } from "@/constants";
+import { Book } from "@/types";
 
 export default async function Home() {
-  const res = await fetch(`${BASE_URL}/books`);
-  const data = await res.json();
-
-  const books = data.data;
+  const books = await getFeaturedBooks();
 
   return (
     <>
@@ -20,4 +18,18 @@ export default async function Home() {
       <CtaBand />
     </>
   );
+}
+
+async function getFeaturedBooks(): Promise<Book[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/books`, { cache: "no-store" });
+
+    if (!res.ok) return [];
+
+    const data = await res.json().catch(() => null);
+
+    return Array.isArray(data?.data) ? (data.data as Book[]) : [];
+  } catch {
+    return [];
+  }
 }

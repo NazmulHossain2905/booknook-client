@@ -39,18 +39,31 @@ export function ReturnDialog({
     setReturning(true);
     try {
       const token = await getClientToken();
+
+      if (!token) {
+        toast.error("Your session has expired", {
+          description: "Please sign in again to return this book.",
+        });
+        return;
+      }
+
       const res = await fetch(`${BASE_URL}/borrows/${record._id}`, {
         method: "PATCH",
         headers: { authorization: token },
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => null);
 
-      if (result.success) {
-        toast.success("Returned — thank you!", {
-          description: `“${record.bookTitle}” is back on the shelf for the next reader.`,
+      if (!res.ok || !result?.success) {
+        toast.error(result?.message ?? "Could not return the book", {
+          description: "Please try again in a moment.",
         });
+        return;
       }
+
+      toast.success("Returned — thank you!", {
+        description: `“${record.bookTitle}” is back on the shelf for the next reader.`,
+      });
 
       router.refresh();
 

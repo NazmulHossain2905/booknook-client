@@ -3,6 +3,7 @@
 import { BookCard } from "@/components/books/book-card";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
+import { LoadFailedState } from "@/components/shared/load-failed-state";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -24,7 +25,13 @@ import { ArrowUpDown, BookX, LibraryBig, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 
-function BooksContent({ books }: { books: Book[] }) {
+function BooksContent({
+  books,
+  error = false,
+}: {
+  books: Book[];
+  error?: boolean;
+}) {
   usePageTitle("All Books");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -191,7 +198,9 @@ function BooksContent({ books }: { books: Book[] }) {
 
       {/* Grid */}
       <div className="mt-4">
-        {visible.length > 0 ? (
+        {error ? (
+          <LoadFailedState title="We couldn't load the shelves" />
+        ) : visible.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((book, i) => (
               <BookCard key={book._id} book={book} priority={i < 3} />
@@ -229,10 +238,16 @@ function BooksContent({ books }: { books: Book[] }) {
   );
 }
 
-export default function BooksView({ books }: { books: Book[] }) {
+export default function BooksView({
+  books,
+  error = false,
+}: {
+  books: Book[];
+  error?: boolean;
+}) {
   return (
     <Suspense fallback={null}>
-      <BooksContent books={books} />
+      <BooksContent books={books} error={error} />
     </Suspense>
   );
 }

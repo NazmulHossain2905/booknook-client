@@ -3,20 +3,24 @@ import { DeleteBookDialog } from "@/components/books/delete-book-dialog";
 import { EditBookSheet } from "@/components/books/edit-book-sheet";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
+import { LoadFailedState } from "@/components/shared/load-failed-state";
 import { Input } from "@/components/ui/input";
 
 import { usePageTitle } from "@/hooks/use-page-title";
 import { cn } from "@/lib/utils";
 import { Book, CATEGORIES, Category } from "@/types";
-import {
-  BookMarked,
-  Search,
-} from "lucide-react";
+import { BookMarked, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { DesktopTable } from "./desktop-table";
 import MobileCards from "./mobile-cards";
 
-export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
+export default function MyBooksView({
+  myBooks,
+  error = false,
+}: {
+  myBooks: Book[];
+  error?: boolean;
+}) {
   usePageTitle("My Books");
 
   const [query, setQuery] = useState("");
@@ -47,18 +51,20 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
             My Books
           </h1>
           <p className="text-muted-foreground mt-4 text-base leading-relaxed">
-            The titles you&apos;ve carried into the library. Tidy them up, restock
-            the copies, or take one home for good.
+            The titles you&apos;ve carried into the library. Tidy them up,
+            restock the copies, or take one home for good.
           </p>
         </div>
-        <div className="bg-card rounded-2xl border px-5 py-4 text-center shadow-sm">
-          <p className="font-display text-primary text-3xl leading-none font-semibold">
-            {myBooks.length}
-          </p>
-          <p className="text-muted-foreground mt-1.5 text-xs font-medium tracking-wide uppercase">
-            {myBooks.length === 1 ? "book added" : "books added"}
-          </p>
-        </div>
+        {!error && (
+          <div className="bg-card rounded-2xl border px-5 py-4 text-center shadow-sm">
+            <p className="font-display text-primary text-3xl leading-none font-semibold">
+              {myBooks.length}
+            </p>
+            <p className="text-muted-foreground mt-1.5 text-xs font-medium tracking-wide uppercase">
+              {myBooks.length === 1 ? "book added" : "books added"}
+            </p>
+          </div>
+        )}
       </header>
 
       {/* Controls */}
@@ -103,7 +109,9 @@ export default function MyBooksView({ myBooks }: { myBooks: Book[] }) {
 
       {/* Content */}
       <div className="mt-6">
-        {visible.length === 0 ? (
+        {error ? (
+          <LoadFailedState title="We couldn't load your books" />
+        ) : visible.length === 0 ? (
           <EmptyState
             icon={BookMarked}
             title={

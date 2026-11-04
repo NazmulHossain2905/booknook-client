@@ -120,7 +120,7 @@ export function Footer() {
                 <span>
                   42 Paper Lane, Second Floor
                   <br />
-                  Portland, OR 97205
+                  Jashore, OR 97205
                 </span>
               </li>
               <li>
@@ -144,7 +144,7 @@ export function Footer() {
                     aria-hidden
                     className="text-gold-soft size-4 shrink-0"
                   />
-                  +1 (234) 567-8901
+                  +880 1234-567891
                 </a>
               </li>
             </ul>
