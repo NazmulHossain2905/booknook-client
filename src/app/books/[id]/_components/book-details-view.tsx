@@ -222,7 +222,7 @@ export default function BookDetailsView({
           {/* Added by */}
           <div className="bg-secondary/50 mt-7 flex items-center gap-3 rounded-xl border p-4">
             <UserAvatar
-              src={contributor?.avatar}
+              src={book?.addedByImage}
               name={book.addedBy}
               className="size-11"
             />

@@ -31,6 +31,8 @@ export interface Book {
   addedBy: string;
   /** Email of the member who added the book — used for ownership checks */
   addedByEmail: string;
+  /** Image of the member who added the book — used for ownership checks */
+  addedByImage: string;
   /** ISO date the book was added */
   addedAt: string;
 }
